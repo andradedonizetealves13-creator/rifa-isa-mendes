@@ -40,13 +40,17 @@
         }
     </script>
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            box-sizing: border-box;
+        }
         body {
             background-color: #2b020d;
             background-image: radial-gradient(circle at 50% 20%, #4a051b 0%, #2b020d 70%, #170006 100%);
             color: #ffffff;
             font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -57,103 +61,117 @@
             animation: shake 0.4s ease-in-out;
             border-color: #ef4444 !important;
         }
+        
+        /* BOTÕES DE NÚMEROS OTIMIZADOS PARA TELA TÁTIL */
         .number-btn {
             background-color: #fde8ef;
             color: #380213;
-            font-weight: 700;
-            transition: all 0.15s ease-in-out;
+            font-weight: 800;
+            transition: all 0.12s ease-in-out;
             aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            font-size: 0.95rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+            font-size: 0.85rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             user-select: none;
             cursor: pointer;
             touch-action: manipulation;
         }
-        @media (min-width: 640px) { .number-btn { font-size: 1.1rem; } }
-        .number-btn:active:not(.reserved):not(.confirmed) { transform: scale(0.92); }
-        .number-btn:hover:not(.reserved):not(.confirmed) {
-            background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(253, 232, 239, 0.4);
+        @media (min-width: 640px) { 
+            .number-btn { font-size: 1.1rem; border-radius: 10px; } 
+        }
+        .number-btn:active:not(.reserved):not(.confirmed) { 
+            transform: scale(0.88); 
+            background-color: #f8c2d2;
         }
         .number-btn.selected {
             background-color: #10b981 !important;
             color: #ffffff !important;
-            box-shadow: 0 0 10px #10b981;
-            transform: scale(1.02);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+            transform: scale(1.04);
         }
         .number-btn.reserved {
-            background-color: #24000b !important;
-            color: #888888 !important;
+            background-color: #1c0008 !important;
+            color: #999999 !important;
             border: 1px dashed #ef4444;
             cursor: not-allowed;
-            opacity: 0.6;
+            opacity: 0.65;
         }
         .number-btn.confirmed {
-            background-color: #1c0109 !important;
-            color: #4a1525 !important;
+            background-color: #140005 !important;
+            color: #3d0e1d !important;
             cursor: not-allowed;
-            opacity: 0.35;
+            opacity: 0.3;
             box-shadow: none;
         }
+
         .custom-card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(253, 232, 239, 0.15);
         }
-        .custom-scroll::-webkit-scrollbar { height: 6px; }
+        .custom-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(253, 232, 239, 0.2);
+            background: rgba(253, 232, 239, 0.3);
             border-radius: 4px;
         }
-        /* ESTILO EXATO DA CAIXINHA DA IMAGEM */
+
+        /* CAIXINHAS MOBILE RESPONSIVAS */
         .banner-box {
-            border: 1.5px solid rgba(253, 232, 239, 0.6);
-            border-radius: 16px;
+            border: 1.5px solid rgba(253, 232, 239, 0.5);
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
             background-color: #24000b;
+            transition: transform 0.2s;
         }
         .banner-box-header {
             background-color: #380213;
             color: #fde8ef;
-            padding: 8px 12px;
+            padding: 7px 10px;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
             border-bottom: 1px solid rgba(253, 232, 239, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        @media (min-width: 640px) {
+            .banner-box-header { font-size: 0.88rem; padding: 9px 12px; }
         }
         .banner-box-body {
             background-color: #fde8ef;
             color: #24000b;
-            padding: 16px 12px;
+            padding: 12px 10px;
             font-weight: 800;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             text-align: center;
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.3;
+            line-height: 1.25;
+        }
+        @media (min-width: 640px) {
+            .banner-box-body { font-size: 1.1rem; padding: 16px 12px; }
         }
     </style>
 </head>
-<body class="pb-24 sm:pb-12">
+<body class="pb-28 sm:pb-12">
 
     <!-- TELA DE AUTENTICAÇÃO INICIAL -->
     <div id="authOverlay" class="fixed inset-0 bg-wine-950/95 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         
         <!-- CARD LOGIN -->
         <div id="loginBox" class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-8 rounded-2xl border border-pinkAccent/30 shadow-2xl transition-all duration-200 my-auto">
-            <div class="text-center mb-5 sm:mb-6">
+            <div class="text-center mb-4 sm:mb-6">
                 <div class="w-12 h-12 sm:w-14 sm:h-14 bg-pinkAccent/10 text-pinkAccent rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 border border-pinkAccent/30">
                     <i class="fa-solid fa-wand-magic-sparkles text-xl sm:text-2xl"></i>
                 </div>
@@ -161,7 +179,7 @@
                 <p class="text-[11px] sm:text-xs text-white/70 mt-1">Acesse sua conta para escolher seus números</p>
             </div>
 
-            <div id="loginErrorMsg" class="hidden mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-xs font-semibold flex items-center gap-2">
+            <div id="loginErrorMsg" class="hidden mb-3 sm:mb-4 p-2.5 sm:p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-xs font-semibold flex items-center gap-2">
                 <i class="fa-solid fa-triangle-exclamation text-red-400 text-sm"></i>
                 <span id="loginErrorText">E-mail ou senha está incorreto</span>
             </div>
@@ -180,7 +198,7 @@
                 </button>
             </form>
 
-            <div class="mt-5 sm:mt-6 text-center text-xs text-white/70 border-t border-white/10 pt-3.5">
+            <div class="mt-4 sm:mt-6 text-center text-xs text-white/70 border-t border-white/10 pt-3">
                 Não tem uma conta? 
                 <button onclick="switchAuthMode('register')" class="text-pinkAccent font-bold hover:underline ml-1">
                     Cadastre-se aqui
@@ -198,7 +216,7 @@
                 <p class="text-[11px] sm:text-xs text-white/70 mt-0.5">Preencha seus dados para começar</p>
             </div>
 
-            <div id="registerErrorMsg" class="hidden mb-3 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-xs font-semibold flex items-center gap-2">
+            <div id="registerErrorMsg" class="hidden mb-3 p-2.5 sm:p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-xs font-semibold flex items-center gap-2">
                 <i class="fa-solid fa-triangle-exclamation text-red-400 text-sm"></i>
                 <span id="registerErrorText">Verifique as informações preenchidas</span>
             </div>
@@ -240,80 +258,80 @@
 
     </div>
 
-    <!-- NAVBAR PRINCIPAL -->
-    <header class="max-w-5xl mx-auto px-4 sm:px-6 pt-5 pb-4 flex flex-row justify-between items-center border-b border-white/10 mb-6">
+    <!-- NAVBAR PRINCIPAL RESPONSIVA -->
+    <header class="max-w-5xl mx-auto px-3 sm:px-6 pt-3.5 sm:pt-5 pb-3 sm:pb-4 flex flex-wrap justify-between items-center gap-2 border-b border-white/10 mb-4 sm:mb-6">
         <!-- LOGO INSTAGRAM -->
-        <div class="flex items-center gap-2 select-none">
-            <i class="fa-brands fa-instagram text-pinkAccent text-2xl sm:text-3xl"></i>
-            <span class="font-serif font-extrabold text-xl sm:text-2xl tracking-wide text-pinkAccent">isabellamendesstudio</span>
+        <div class="flex items-center gap-1.5 sm:gap-2 select-none">
+            <i class="fa-brands fa-instagram text-pinkAccent text-xl sm:text-3xl"></i>
+            <span class="font-serif font-extrabold text-base sm:text-2xl tracking-wide text-pinkAccent">isabellamendesstudio</span>
         </div>
 
         <!-- USUÁRIO E MEUS NÚMEROS -->
-        <div class="flex items-center gap-2.5">
-            <div id="userInfoHeader" class="hidden text-xs sm:text-sm text-pinkAccent bg-transparent px-3.5 py-1.5 rounded-full border border-pinkAccent/40 items-center gap-2">
-                <i id="userRoleIcon" class="fa-solid fa-user-check text-pinkAccent"></i>
-                <span id="userNameDisplay" class="font-semibold truncate max-w-[90px] sm:max-w-none"></span>
-                <button onclick="logoutUser()" class="text-pinkAccent/70 hover:text-pinkAccent underline ml-1 text-[11px] sm:text-xs">(Sair)</button>
+        <div class="flex items-center gap-2 ml-auto sm:ml-0">
+            <div id="userInfoHeader" class="hidden text-xs sm:text-sm text-pinkAccent bg-transparent px-2.5 sm:px-3.5 py-1 rounded-full border border-pinkAccent/40 items-center gap-1.5">
+                <i id="userRoleIcon" class="fa-solid fa-user-check text-pinkAccent text-xs"></i>
+                <span id="userNameDisplay" class="font-semibold truncate max-w-[70px] sm:max-w-none"></span>
+                <button onclick="logoutUser()" class="text-pinkAccent/70 hover:text-pinkAccent underline ml-1 text-[10px] sm:text-xs">(Sair)</button>
             </div>
 
-            <button id="myNumbersNavBtn" onclick="openModal('myNumbersModal')" class="text-xs sm:text-sm bg-transparent hover:bg-white/5 px-4 py-1.5 rounded-full text-pinkAccent border border-pinkAccent/40 transition flex items-center gap-2">
-                <i class="fa-solid fa-magnifying-glass text-pinkAccent"></i> Meus Números
+            <button id="myNumbersNavBtn" onclick="openModal('myNumbersModal')" class="text-xs sm:text-sm bg-transparent hover:bg-white/5 px-3 sm:px-4 py-1 rounded-full text-pinkAccent border border-pinkAccent/40 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-magnifying-glass text-pinkAccent text-xs"></i> <span>Meus Números</span>
             </button>
         </div>
     </header>
 
     <!-- ÁREA PÚBLICA -->
-    <main id="clientView" class="max-w-4xl mx-auto px-4">
-        <section class="text-center mb-8">
+    <main id="clientView" class="max-w-4xl mx-auto px-3 sm:px-4">
+        <section class="text-center mb-6 sm:mb-8">
             <!-- TÍTULO SORTEIO -->
-            <h1 class="font-serif text-4xl sm:text-6xl font-black tracking-widest text-pinkAccent uppercase mb-6 drop-shadow-lg">
+            <h1 class="font-serif text-3xl sm:text-6xl font-black tracking-widest text-pinkAccent uppercase mb-4 sm:mb-6 drop-shadow-lg">
                 SORTEIO
             </h1>
 
             <!-- CAIXINHAS DINÂMICAS GERENCIADAS PELO ADMIN (ATÉ 6) -->
-            <div id="prizesContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 items-stretch">
+            <div id="prizesContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8 items-stretch">
                 <!-- Renderizado via JS -->
             </div>
 
             <!-- BOTÃO CLICÁVEL WHATSAPP -->
-            <a id="mainWhatsappBtn" href="https://wa.me/5519989517874" target="_blank" class="inline-flex items-center gap-3 bg-transparent hover:bg-white/5 border border-pinkAccent/50 rounded-full py-2.5 px-7 shadow-lg active:scale-95 transition cursor-pointer">
-                <i class="fa-brands fa-whatsapp text-pinkAccent text-2xl"></i>
-                <span class="font-mono font-bold text-lg sm:text-xl tracking-wider text-pinkAccent" id="dispPhone">19989517874</span>
+            <a id="mainWhatsappBtn" href="https://wa.me/5519989517874" target="_blank" class="inline-flex items-center justify-center gap-2.5 bg-transparent hover:bg-white/5 border border-pinkAccent/50 rounded-full py-2 sm:py-2.5 px-5 sm:px-7 shadow-lg active:scale-95 transition cursor-pointer">
+                <i class="fa-brands fa-whatsapp text-pinkAccent text-xl sm:text-2xl"></i>
+                <span class="font-mono font-bold text-base sm:text-xl tracking-wider text-pinkAccent" id="dispPhone">19989517874</span>
             </a>
 
             <!-- LEGENDA MANUSCRITA -->
-            <div class="mt-6">
-                <h2 class="font-cursive text-4xl sm:text-5xl text-pinkAccent tracking-wide drop-shadow">
+            <div class="mt-4 sm:mt-6">
+                <h2 class="font-cursive text-3xl sm:text-5xl text-pinkAccent tracking-wide drop-shadow">
                     Boa sorte
                 </h2>
             </div>
         </section>
 
         <!-- LEGENDA DOS STATUS -->
-        <div class="flex flex-wrap justify-center items-center gap-4 text-xs font-medium mb-6 bg-wine-950/60 p-3 rounded-xl border border-white/5">
-            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-pinkAccent inline-block"></span><span>Livre</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-emerald-500 inline-block"></span><span>Selecionado</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-wine-950 border border-red-500/80 inline-block"></span><span>Reservado</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-wine-950 opacity-40 inline-block"></span><span>Pago</span></div>
+        <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-medium mb-4 sm:mb-6 bg-wine-950/60 p-2.5 sm:p-3 rounded-xl border border-white/5">
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded bg-pinkAccent inline-block"></span><span>Livre</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded bg-emerald-500 inline-block"></span><span>Selecionado</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded bg-wine-950 border border-red-500/80 inline-block"></span><span>Reservado</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded bg-wine-950 opacity-40 inline-block"></span><span>Pago</span></div>
         </div>
 
         <!-- GRELHA DE NÚMEROS -->
-        <section class="custom-card p-3 sm:p-6 rounded-2xl shadow-2xl mb-8">
-            <div id="numbersGrid" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2"></div>
+        <section class="custom-card p-2 sm:p-6 rounded-2xl shadow-2xl mb-8">
+            <div id="numbersGrid" class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2"></div>
         </section>
 
-        <!-- BARRA FLUTUANTE DE CHECKOUT -->
-        <section id="checkoutSection" class="fixed bottom-0 left-0 right-0 bg-wine-950/95 border-t border-pinkAccent/30 p-3 sm:p-4 backdrop-blur-md z-40 transition-transform transform translate-y-full shadow-2xl">
-            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div class="text-center sm:text-left w-full sm:w-auto">
-                    <div class="text-[11px] text-pinkAccent/80">Números selecionados:</div>
-                    <div id="selectedCountText" class="font-bold text-sm sm:text-lg text-pinkAccent truncate max-w-full">Nenhum número selecionado</div>
+        <!-- BARRA FLUTUANTE DE CHECKOUT MOBILE -->
+        <section id="checkoutSection" class="fixed bottom-0 left-0 right-0 bg-wine-950/95 border-t border-pinkAccent/30 p-2.5 sm:p-4 backdrop-blur-md z-40 transition-transform transform translate-y-full shadow-2xl">
+            <div class="max-w-4xl mx-auto flex flex-row items-center justify-between gap-2">
+                <div class="text-left w-1/2 sm:w-auto">
+                    <div class="text-[10px] sm:text-[11px] text-pinkAccent/80">Selecionados:</div>
+                    <div id="selectedCountText" class="font-bold text-xs sm:text-lg text-pinkAccent truncate">0 números</div>
                     <div id="totalAmountText" class="text-xs sm:text-sm text-emerald-400 font-bold">Total: R$ 0,00</div>
                 </div>
-                <div class="flex gap-2 w-full sm:w-auto">
-                    <button onclick="clearSelection()" class="px-3.5 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold active:scale-95 transition">Limpar</button>
-                    <button onclick="confirmAndReserve()" class="flex-1 sm:flex-none px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2 text-sm">
-                        Reservar Agora <i class="fa-solid fa-arrow-right"></i>
+                <div class="flex gap-1.5 w-1/2 sm:w-auto justify-end">
+                    <button onclick="clearSelection()" class="px-2.5 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-[11px] sm:text-xs font-semibold active:scale-95 transition">Limpar</button>
+                    <button onclick="confirmAndReserve()" class="px-3.5 py-2 sm:py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 text-xs sm:text-sm">
+                        <span>Reservar</span> <i class="fa-solid fa-arrow-right text-xs"></i>
                     </button>
                 </div>
             </div>
@@ -338,16 +356,16 @@
                 <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Arrecadação</span><div id="statTotalMoney" class="text-lg sm:text-xl font-bold text-goldAccent">R$ 0,00</div></div>
             </div>
 
-            <!-- NOVO: GERENCIAMENTO DAS CAIXINHAS DA TELA INICIAL (ATÉ 6) -->
+            <!-- GERENCIAMENTO DAS CAIXINHAS DA TELA INICIAL (ATÉ 6) -->
             <div class="custom-card p-3 sm:p-4 rounded-2xl">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-sm sm:text-lg text-pinkAccent flex items-center gap-2"><i class="fa-solid fa-boxes-packing"></i> Gerenciar Caixinhas da Tela Inicial (Até 6)</h3>
-                    <button onclick="addNewPrizeBoxAdmin()" id="addPrizeBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
+                    <h3 class="font-bold text-xs sm:text-lg text-pinkAccent flex items-center gap-2"><i class="fa-solid fa-boxes-packing"></i> Gerenciar Caixinhas (Até 6)</h3>
+                    <button onclick="addNewPrizeBoxAdmin()" id="addPrizeBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 shadow">
                         <i class="fa-solid fa-plus"></i> Nova Caixinha
                     </button>
                 </div>
                 <div id="adminPrizesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    <!-- Gerenciado via JS -->
+                    <!-- Renderizado via JS -->
                 </div>
             </div>
 
@@ -479,7 +497,6 @@
             pixKey: '519.223.948-66'
         };
 
-        // LISTA DE ÍCONES DISPONÍVEIS PARA ESCOLHA
         const AVAILABLE_ICONS = [
             { icon: 'fa-gift', label: 'Presente 🎁' },
             { icon: 'fa-sack-dollar', label: 'Saco de Dinheiro 💰' },
@@ -493,7 +510,6 @@
             { icon: 'fa-gem', label: 'Diamante 💎' }
         ];
 
-        // CAIXINHAS PADRÃO
         const DEFAULT_PRIZES = [
             { id: 'PZ-1', icon: 'fa-gift', title: 'Prêmio 1:', content: 'Um perfume Árabe' },
             { id: 'PZ-2', icon: 'fa-sack-dollar', title: 'Valor por número:', content: 'R$12,00' },
@@ -520,7 +536,6 @@
                 renderAdminDashboard();
             });
 
-            // ESCUTAR CAIXINHAS NA NUVEM
             db.ref('prizes').on('value', (snapshot) => {
                 const val = snapshot.val();
                 if (val) {
@@ -542,13 +557,12 @@
             const container = document.getElementById('prizesContainer');
             if (!container) return;
 
-            // Ajustar colunas dinamicamente baseado na quantidade de caixinhas
             const count = prizes.length;
-            if (count === 1) container.className = "grid grid-cols-1 max-w-sm mx-auto gap-4 mb-8 items-stretch";
-            else if (count === 2) container.className = "grid grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto gap-4 mb-8 items-stretch";
-            else if (count === 3) container.className = "grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 items-stretch";
-            else if (count === 4) container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 items-stretch";
-            else container.className = "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 items-stretch";
+            if (count === 1) container.className = "grid grid-cols-1 max-w-xs mx-auto gap-3 mb-6 items-stretch";
+            else if (count === 2) container.className = "grid grid-cols-1 sm:grid-cols-2 max-w-xl mx-auto gap-3 mb-6 items-stretch";
+            else if (count === 3) container.className = "grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8 items-stretch";
+            else if (count === 4) container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 sm:mb-8 items-stretch";
+            else container.className = "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8 items-stretch";
 
             container.innerHTML = prizes.map(p => `
                 <div class="banner-box">
@@ -921,7 +935,7 @@
 
             if (selectedNumbers.length > 0) {
                 bar.classList.remove('translate-y-full');
-                document.getElementById('selectedCountText').textContent = `${selectedNumbers.length} número(s): [ ${selectedNumbers.join(', ')} ]`;
+                document.getElementById('selectedCountText').textContent = `${selectedNumbers.length} nº(${selectedNumbers.join(', ')})`;
                 const total = selectedNumbers.length * appConfig.pricePerNumber;
                 document.getElementById('totalAmountText').textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
             } else {
