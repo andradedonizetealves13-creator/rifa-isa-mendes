@@ -206,7 +206,8 @@
 
     <!-- NAVBAR PRINCIPAL -->
     <header class="max-w-4xl mx-auto px-3.5 sm:px-4 pt-4 sm:pt-6 pb-2 flex flex-col sm:flex-row justify-between items-center gap-3 border-b border-white/10 mb-4 sm:mb-6">
-        <div class="flex items-center gap-2">
+        <!-- ÁREA SECRETA DO LOGO (5 toques para abrir Admin no Celular) -->
+        <div id="secretLogoTrigger" onclick="handleSecretTap()" class="flex items-center gap-2 cursor-pointer select-none">
             <i class="fa-solid fa-paintbrush text-pinkAccent text-xl sm:text-2xl"></i>
             <span class="font-serif font-bold text-lg sm:text-xl tracking-wider text-pinkAccent lowercase">isabellamendesstudio</span>
         </div>
@@ -420,18 +421,18 @@
     </div>
 
     <script>
-        // CONFIGURAÇÕES DO FIREBASE REALTIME DATABASE
+        // CHAVES REAIS DO FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSy_SUA_API_KEY_AQUI",
+            apiKey: "AIzaSyCFh-WAp-w7gFlBASFVECvsWH8QwYyAdMI",
             authDomain: "isa-mendes-rifa.firebaseapp.com",
             databaseURL: "https://isa-mendes-rifa-default-rtdb.firebaseio.com",
             projectId: "isa-mendes-rifa",
-            storageBucket: "isa-mendes-rifa.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
+            storageBucket: "isa-mendes-rifa.firebasestorage.app",
+            messagingSenderId: "90900347206",
+            appId: "1:90900347206:web:40116d98381f65a7650d47",
+            measurementId: "G-5D585Y87JB"
         };
 
-        // Inicializar Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -452,15 +453,37 @@
         let currentUser = JSON.parse(localStorage.getItem('rifa_current_user')) || null;
         let selectedNumbers = [];
 
-        // CONEXÃO EM TEMPO REAL COM O FIREBASE
+        // TOQUE SECRETO PARA ADMIN (5 toques rápidos na logo) OU Atalho teclado (Ctrl+Shift+A)
+        let secretTapCount = 0;
+        let secretTapTimer = null;
+
+        function handleSecretTap() {
+            secretTapCount++;
+            clearTimeout(secretTapTimer);
+            if (secretTapCount >= 5) {
+                secretTapCount = 0;
+                logoutUser();
+                alert('Acesso Secreto: Faça login com os dados de Administrador.');
+            } else {
+                secretTapTimer = setTimeout(() => { secretTapCount = 0; }, 1500);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+                e.preventDefault();
+                logoutUser();
+                alert('Acesso Secreto: Faça login com os dados de Administrador.');
+            }
+        });
+
+        // CONEXÃO EM TEMPO REAL COM FIREBASE
         document.addEventListener('DOMContentLoaded', () => {
-            // Escutar Usuários em tempo real
             db.ref('users').on('value', (snapshot) => {
                 users = snapshot.val() || {};
                 renderAdminDashboard();
             });
 
-            // Escutar Reservas de Números em tempo real
             db.ref('reservations').on('value', (snapshot) => {
                 numberReservations = snapshot.val() || {};
                 renderGrid();
@@ -551,7 +574,6 @@
             const newUserId = 'USR-' + Date.now();
             const newUser = { id: newUserId, name, phone, email, password, isAdmin: false };
 
-            // Salvar no Firebase
             db.ref('users/' + newUserId).set(newUser, (err) => {
                 if (err) {
                     alert('Erro ao salvar na nuvem.');
@@ -673,7 +695,6 @@
                 };
             });
 
-            // Enviar alterações para o Firebase
             db.ref().update(updates, (err) => {
                 if (err) {
                     alert('Erro ao realizar reserva na nuvem.');
