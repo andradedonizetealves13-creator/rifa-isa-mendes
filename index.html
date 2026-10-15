@@ -9,8 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Playfair Display + Montserrat -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Playfair Display, Montserrat e Great Vibes -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK (Compat v9) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -33,6 +33,7 @@
                     fontFamily: {
                         serif: ['Playfair Display', 'serif'],
                         sans: ['Montserrat', 'sans-serif'],
+                        cursive: ['Great Vibes', 'cursive'],
                     }
                 }
             }
@@ -41,8 +42,8 @@
     <style>
         * { -webkit-tap-highlight-color: transparent; }
         body {
-            background-color: #380213;
-            background-image: radial-gradient(circle at 50% 20%, #52061f 0%, #380213 70%, #24000b 100%);
+            background-color: #2b020d;
+            background-image: radial-gradient(circle at 50% 20%, #4a051b 0%, #2b020d 70%, #170006 100%);
             color: #ffffff;
             font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
@@ -99,14 +100,49 @@
             box-shadow: none;
         }
         .custom-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(253, 232, 239, 0.15);
         }
         .custom-scroll::-webkit-scrollbar { height: 6px; }
         .custom-scroll::-webkit-scrollbar-thumb {
             background: rgba(253, 232, 239, 0.2);
             border-radius: 4px;
+        }
+        /* ESTILO EXATO DA CAIXINHA DA IMAGEM */
+        .banner-box {
+            border: 1.5px solid rgba(253, 232, 239, 0.6);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            background-color: #24000b;
+        }
+        .banner-box-header {
+            background-color: #380213;
+            color: #fde8ef;
+            padding: 8px 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-bottom: 1px solid rgba(253, 232, 239, 0.2);
+        }
+        .banner-box-body {
+            background-color: #fde8ef;
+            color: #24000b;
+            padding: 16px 12px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3;
         }
     </style>
 </head>
@@ -205,91 +241,70 @@
     </div>
 
     <!-- NAVBAR PRINCIPAL -->
-    <header class="max-w-4xl mx-auto px-3.5 sm:px-4 pt-4 sm:pt-6 pb-2 flex flex-col sm:flex-row justify-between items-center gap-3 border-b border-white/10 mb-4 sm:mb-6">
+    <header class="max-w-5xl mx-auto px-4 sm:px-6 pt-5 pb-4 flex flex-row justify-between items-center border-b border-white/10 mb-6">
+        <!-- LOGO INSTAGRAM -->
         <div class="flex items-center gap-2 select-none">
-            <i class="fa-solid fa-paintbrush text-pinkAccent text-xl sm:text-2xl"></i>
-            <span class="font-serif font-bold text-lg sm:text-xl tracking-wider text-pinkAccent lowercase">isabellamendesstudio</span>
+            <i class="fa-brands fa-instagram text-pinkAccent text-2xl sm:text-3xl"></i>
+            <span class="font-serif font-extrabold text-xl sm:text-2xl tracking-wide text-pinkAccent">isabellamendesstudio</span>
         </div>
-        <div class="flex items-center justify-between w-full sm:w-auto gap-2">
-            <div id="userInfoHeader" class="hidden text-xs text-pinkAccent bg-white/5 px-3 py-1.5 rounded-full border border-pinkAccent/20 items-center gap-1.5">
-                <i id="userRoleIcon" class="fa-solid fa-user-check text-emerald-400"></i>
-                <span id="userNameDisplay" class="font-bold truncate max-w-[100px] sm:max-w-none"></span>
-                <button onclick="logoutUser()" class="text-red-300 hover:underline ml-1">(Sair)</button>
+
+        <!-- USUÁRIO E MEUS NÚMEROS -->
+        <div class="flex items-center gap-2.5">
+            <div id="userInfoHeader" class="hidden text-xs sm:text-sm text-pinkAccent bg-transparent px-3.5 py-1.5 rounded-full border border-pinkAccent/40 items-center gap-2">
+                <i id="userRoleIcon" class="fa-solid fa-user-check text-pinkAccent"></i>
+                <span id="userNameDisplay" class="font-semibold truncate max-w-[90px] sm:max-w-none"></span>
+                <button onclick="logoutUser()" class="text-pinkAccent/70 hover:text-pinkAccent underline ml-1 text-[11px] sm:text-xs">(Sair)</button>
             </div>
 
-            <button id="myNumbersNavBtn" onclick="openModal('myNumbersModal')" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full text-pinkAccent border border-pinkAccent/30 transition flex items-center gap-1.5 ml-auto sm:ml-0">
-                <i class="fa-solid fa-magnifying-glass"></i> Meus Números
+            <button id="myNumbersNavBtn" onclick="openModal('myNumbersModal')" class="text-xs sm:text-sm bg-transparent hover:bg-white/5 px-4 py-1.5 rounded-full text-pinkAccent border border-pinkAccent/40 transition flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass text-pinkAccent"></i> Meus Números
             </button>
         </div>
     </header>
 
-    <!-- ÁREA PÚBLICA (VISÃO DO CLIENTE) -->
-    <main id="clientView" class="max-w-3xl mx-auto px-3 sm:px-4">
-        <section class="text-center mb-6 sm:mb-8">
-            <h1 class="font-serif text-3xl sm:text-5xl font-extrabold tracking-widest text-pinkAccent uppercase mb-4 sm:mb-6 drop-shadow-md">
+    <!-- ÁREA PÚBLICA -->
+    <main id="clientView" class="max-w-4xl mx-auto px-4">
+        <section class="text-center mb-8">
+            <!-- TÍTULO SORTEIO -->
+            <h1 class="font-serif text-4xl sm:text-6xl font-black tracking-widest text-pinkAccent uppercase mb-6 drop-shadow-lg">
                 SORTEIO
             </h1>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-5 sm:mb-6">
-                <div class="flex flex-col items-center">
-                    <div class="w-full bg-pinkAccent rounded-xl overflow-hidden shadow-lg border border-pinkAccent/20">
-                        <div class="bg-wine-800 text-pinkAccent py-1.5 px-3 font-serif font-bold text-xs sm:text-sm tracking-wide flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-gift text-pinkAccent"></i> Prêmio 1:
-                        </div>
-                        <div class="p-2.5 sm:p-3 text-wine-900 font-bold text-sm sm:text-base min-h-[48px] sm:min-h-[60px] flex items-center justify-center">
-                            Um perfume Árabe
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col items-center">
-                    <div class="w-full bg-pinkAccent rounded-xl overflow-hidden shadow-lg border border-pinkAccent/20">
-                        <div class="bg-wine-800 text-pinkAccent py-1.5 px-3 font-serif font-bold text-xs sm:text-sm tracking-wide flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-sack-dollar text-pinkAccent"></i> Valor por número:
-                        </div>
-                        <div class="p-2.5 sm:p-3 text-wine-900 font-extrabold text-xl sm:text-2xl min-h-[48px] sm:min-h-[60px] flex items-center justify-center">
-                            R$<span id="ticketPriceDisplay">12,00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col items-center">
-                    <div class="w-full bg-pinkAccent rounded-xl overflow-hidden shadow-lg border border-pinkAccent/20">
-                        <div class="bg-wine-800 text-pinkAccent py-1.5 px-3 font-serif font-bold text-xs sm:text-sm tracking-wide flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-wine-glass text-pinkAccent"></i> Prêmio 2:
-                        </div>
-                        <div class="p-2.5 sm:p-3 text-wine-900 font-bold text-xs sm:text-sm min-h-[48px] sm:min-h-[60px] flex items-center justify-center leading-snug">
-                            Cesta com um vinho + acompanhamentos
-                        </div>
-                    </div>
-                </div>
+            <!-- CAIXINHAS DINÂMICAS GERENCIADAS PELO ADMIN (ATÉ 6) -->
+            <div id="prizesContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 items-stretch">
+                <!-- Renderizado via JS -->
             </div>
 
-            <a id="mainWhatsappBtn" href="https://wa.me/5519989517874" target="_blank" class="w-full sm:w-auto bg-wine-800 hover:bg-wine-900 border border-pinkAccent/30 hover:border-pinkAccent/60 rounded-xl sm:rounded-2xl py-2.5 sm:py-3 px-5 inline-flex items-center justify-center gap-2.5 shadow-lg active:scale-95 transition transform cursor-pointer">
-                <i class="fa-brands fa-whatsapp text-green-400 text-xl sm:text-2xl"></i>
-                <span class="font-mono font-bold text-base sm:text-lg tracking-wider text-pinkAccent" id="dispPhone">19 98951-7874</span>
+            <!-- BOTÃO CLICÁVEL WHATSAPP -->
+            <a id="mainWhatsappBtn" href="https://wa.me/5519989517874" target="_blank" class="inline-flex items-center gap-3 bg-transparent hover:bg-white/5 border border-pinkAccent/50 rounded-full py-2.5 px-7 shadow-lg active:scale-95 transition cursor-pointer">
+                <i class="fa-brands fa-whatsapp text-pinkAccent text-2xl"></i>
+                <span class="font-mono font-bold text-lg sm:text-xl tracking-wider text-pinkAccent" id="dispPhone">19989517874</span>
             </a>
 
-            <div class="mt-4 sm:mt-6">
-                <h2 class="font-serif italic text-2xl sm:text-4xl text-pinkAccent font-semibold tracking-wide drop-shadow">
+            <!-- LEGENDA MANUSCRITA -->
+            <div class="mt-6">
+                <h2 class="font-cursive text-4xl sm:text-5xl text-pinkAccent tracking-wide drop-shadow">
                     Boa sorte
                 </h2>
             </div>
         </section>
 
-        <div class="flex flex-wrap justify-center items-center gap-3 text-[11px] sm:text-xs font-medium mb-4 sm:mb-6 bg-wine-950/60 p-2.5 sm:p-3 rounded-xl border border-white/5">
+        <!-- LEGENDA DOS STATUS -->
+        <div class="flex flex-wrap justify-center items-center gap-4 text-xs font-medium mb-6 bg-wine-950/60 p-3 rounded-xl border border-white/5">
             <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-pinkAccent inline-block"></span><span>Livre</span></div>
             <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-emerald-500 inline-block"></span><span>Selecionado</span></div>
             <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-wine-950 border border-red-500/80 inline-block"></span><span>Reservado</span></div>
             <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-wine-950 opacity-40 inline-block"></span><span>Pago</span></div>
         </div>
 
-        <section class="custom-card p-2.5 sm:p-5 rounded-2xl shadow-2xl mb-6 sm:mb-8">
+        <!-- GRELHA DE NÚMEROS -->
+        <section class="custom-card p-3 sm:p-6 rounded-2xl shadow-2xl mb-8">
             <div id="numbersGrid" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2"></div>
         </section>
 
+        <!-- BARRA FLUTUANTE DE CHECKOUT -->
         <section id="checkoutSection" class="fixed bottom-0 left-0 right-0 bg-wine-950/95 border-t border-pinkAccent/30 p-3 sm:p-4 backdrop-blur-md z-40 transition-transform transform translate-y-full shadow-2xl">
-            <div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div class="text-center sm:text-left w-full sm:w-auto">
                     <div class="text-[11px] text-pinkAccent/80">Números selecionados:</div>
                     <div id="selectedCountText" class="font-bold text-sm sm:text-lg text-pinkAccent truncate max-w-full">Nenhum número selecionado</div>
@@ -315,6 +330,7 @@
                 </div>
             </div>
 
+            <!-- CARDS DE ESTATÍSTICAS -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                 <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Confirmados/Pagos</span><div id="statConfirmed" class="text-lg sm:text-xl font-bold text-emerald-400">0</div></div>
                 <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Pendentes</span><div id="statPending" class="text-lg sm:text-xl font-bold text-amber-400">0</div></div>
@@ -322,6 +338,20 @@
                 <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Arrecadação</span><div id="statTotalMoney" class="text-lg sm:text-xl font-bold text-goldAccent">R$ 0,00</div></div>
             </div>
 
+            <!-- NOVO: GERENCIAMENTO DAS CAIXINHAS DA TELA INICIAL (ATÉ 6) -->
+            <div class="custom-card p-3 sm:p-4 rounded-2xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-sm sm:text-lg text-pinkAccent flex items-center gap-2"><i class="fa-solid fa-boxes-packing"></i> Gerenciar Caixinhas da Tela Inicial (Até 6)</h3>
+                    <button onclick="addNewPrizeBoxAdmin()" id="addPrizeBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-plus"></i> Nova Caixinha
+                    </button>
+                </div>
+                <div id="adminPrizesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <!-- Gerenciado via JS -->
+                </div>
+            </div>
+
+            <!-- TABELA DE RESERVAS -->
             <div class="custom-card p-3 sm:p-4 rounded-2xl overflow-hidden">
                 <h3 class="font-bold text-sm sm:text-lg text-pinkAccent mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Gerenciamento de Números</h3>
                 <div class="overflow-x-auto custom-scroll">
@@ -341,6 +371,7 @@
                 </div>
             </div>
 
+            <!-- TABELA DE USUÁRIOS -->
             <div class="custom-card p-3 sm:p-4 rounded-2xl overflow-hidden">
                 <h3 class="font-bold text-sm sm:text-lg text-pinkAccent mb-3 flex items-center gap-2"><i class="fa-solid fa-users-gear"></i> Controle de Usuários Cadastrados</h3>
                 <div class="overflow-x-auto custom-scroll">
@@ -393,6 +424,7 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR USUÁRIO -->
     <div id="editUserModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto">
             <button onclick="closeModal('editUserModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -411,6 +443,7 @@
         </div>
     </div>
 
+    <!-- MODAL CONSULTAR MEUS NÚMEROS -->
     <div id="myNumbersModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto">
             <button onclick="closeModal('myNumbersModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -446,9 +479,31 @@
             pixKey: '519.223.948-66'
         };
 
+        // LISTA DE ÍCONES DISPONÍVEIS PARA ESCOLHA
+        const AVAILABLE_ICONS = [
+            { icon: 'fa-gift', label: 'Presente 🎁' },
+            { icon: 'fa-sack-dollar', label: 'Saco de Dinheiro 💰' },
+            { icon: 'fa-wine-glass', label: 'Vinho 🍷' },
+            { icon: 'fa-star', label: 'Estrela ⭐' },
+            { icon: 'fa-trophy', label: 'Troféu 🏆' },
+            { icon: 'fa-heart', label: 'Coração 💖' },
+            { icon: 'fa-wand-magic-sparkles', label: 'Beleza / Maquiagem 💄' },
+            { icon: 'fa-fire', label: 'Fogo 🔥' },
+            { icon: 'fa-crown', label: 'Coroa 👑' },
+            { icon: 'fa-gem', label: 'Diamante 💎' }
+        ];
+
+        // CAIXINHAS PADRÃO
+        const DEFAULT_PRIZES = [
+            { id: 'PZ-1', icon: 'fa-gift', title: 'Prêmio 1:', content: 'Um perfume Árabe' },
+            { id: 'PZ-2', icon: 'fa-sack-dollar', title: 'Valor por número:', content: 'R$12,00' },
+            { id: 'PZ-3', icon: 'fa-wine-glass', title: 'Prêmio 2:', content: 'Cesta com um vinho + acompanhamentos' }
+        ];
+
         let appConfig = DEFAULT_CONFIG;
         let numberReservations = {};
         let users = {};
+        let prizes = [];
         let currentUser = JSON.parse(localStorage.getItem('rifa_current_user')) || null;
         let selectedNumbers = [];
 
@@ -465,10 +520,118 @@
                 renderAdminDashboard();
             });
 
+            // ESCUTAR CAIXINHAS NA NUVEM
+            db.ref('prizes').on('value', (snapshot) => {
+                const val = snapshot.val();
+                if (val) {
+                    prizes = Object.values(val);
+                } else {
+                    prizes = DEFAULT_PRIZES;
+                    db.ref('prizes').set(DEFAULT_PRIZES);
+                }
+                renderPrizesBoxes();
+                renderAdminPrizesList();
+            });
+
             updateHeaderInfo();
             checkUserSession();
             setInterval(cleanExpiredReservations, 60000);
         });
+
+        function renderPrizesBoxes() {
+            const container = document.getElementById('prizesContainer');
+            if (!container) return;
+
+            // Ajustar colunas dinamicamente baseado na quantidade de caixinhas
+            const count = prizes.length;
+            if (count === 1) container.className = "grid grid-cols-1 max-w-sm mx-auto gap-4 mb-8 items-stretch";
+            else if (count === 2) container.className = "grid grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto gap-4 mb-8 items-stretch";
+            else if (count === 3) container.className = "grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 items-stretch";
+            else if (count === 4) container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 items-stretch";
+            else container.className = "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 items-stretch";
+
+            container.innerHTML = prizes.map(p => `
+                <div class="banner-box">
+                    <div class="banner-box-header">
+                        <i class="fa-solid ${p.icon}"></i>
+                        <span>${p.title}</span>
+                    </div>
+                    <div class="banner-box-body">
+                        ${p.content}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminPrizesList() {
+            const list = document.getElementById('adminPrizesList');
+            const addBtn = document.getElementById('addPrizeBtn');
+            if (!list) return;
+
+            if (prizes.length >= 6) {
+                if (addBtn) addBtn.classList.add('hidden');
+            } else {
+                if (addBtn) addBtn.classList.remove('hidden');
+            }
+
+            list.innerHTML = prizes.map((p, index) => `
+                <div class="bg-wine-950 p-3 rounded-xl border border-white/10 text-xs space-y-2">
+                    <div class="flex justify-between items-center font-bold text-pinkAccent">
+                        <span>Caixinha #${index + 1}</span>
+                        <button onclick="removePrizeBoxAdmin('${p.id}')" class="text-red-400 hover:text-red-300 text-xs"><i class="fa-solid fa-trash"></i> Excluir</button>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-white/60 block mb-0.5">Ícone:</label>
+                        <select onchange="updatePrizeFieldAdmin('${p.id}', 'icon', this.value)" class="w-full bg-wine-900 border border-white/20 rounded-lg p-1.5 text-white text-xs focus:outline-none">
+                            ${AVAILABLE_ICONS.map(i => `<option value="${i.icon}" ${p.icon === i.icon ? 'selected' : ''}>${i.label}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-white/60 block mb-0.5">Título da Caixinha:</label>
+                        <input type="text" value="${p.title}" onblur="updatePrizeFieldAdmin('${p.id}', 'title', this.value)" class="w-full bg-wine-900 border border-white/20 rounded-lg p-1.5 text-white text-xs focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-white/60 block mb-0.5">Conteúdo / Texto Interno:</label>
+                        <input type="text" value="${p.content}" onblur="updatePrizeFieldAdmin('${p.id}', 'content', this.value)" class="w-full bg-wine-900 border border-white/20 rounded-lg p-1.5 text-white text-xs focus:outline-none">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addNewPrizeBoxAdmin() {
+            if (prizes.length >= 6) {
+                alert('Limite máximo de 6 caixinhas atingido!');
+                return;
+            }
+            const newId = 'PZ-' + Date.now();
+            const newPrize = {
+                id: newId,
+                icon: 'fa-gift',
+                title: `Prêmio ${prizes.length + 1}:`,
+                content: 'Descrição do Prêmio'
+            };
+            prizes.push(newPrize);
+            db.ref('prizes').set(prizes);
+        }
+
+        function updatePrizeFieldAdmin(id, field, value) {
+            const p = prizes.find(item => item.id === id);
+            if (p) {
+                p[field] = value;
+                db.ref('prizes').set(prizes);
+            }
+        }
+
+        function removePrizeBoxAdmin(id) {
+            if (prizes.length <= 1) {
+                alert('Você deve manter pelo menos 1 caixinha na tela inicial!');
+                return;
+            }
+            if (confirm('Deseja excluir esta caixinha?')) {
+                prizes = prizes.filter(p => p.id !== id);
+                db.ref('prizes').set(prizes);
+            }
+        }
 
         function triggerShakeError(boxId, msgId, textId, message) {
             const box = document.getElementById(boxId);
@@ -578,7 +741,6 @@
             );
 
             if (user) {
-                // Se o email for do adm, garante permissão de admin
                 if (user.email === ADMIN_EMAIL.toLowerCase()) {
                     user.isAdmin = true;
                 }
@@ -607,14 +769,14 @@
                 
                 if (currentUser.isAdmin || currentUser.email === ADMIN_EMAIL.toLowerCase()) {
                     userNameDisp.textContent = "Admin";
-                    userRoleIcon.className = "fa-solid fa-user-shield text-amber-400";
+                    userRoleIcon.className = "fa-solid fa-user-shield text-pinkAccent";
                     clientView.classList.add('hidden');
                     adminView.classList.remove('hidden');
                     myNumbersBtn.classList.add('hidden');
                     renderAdminDashboard();
                 } else {
                     userNameDisp.textContent = currentUser.name.split(' ')[0];
-                    userRoleIcon.className = "fa-solid fa-user-check text-emerald-400";
+                    userRoleIcon.className = "fa-solid fa-user-check text-pinkAccent";
                     clientView.classList.remove('hidden');
                     adminView.classList.add('hidden');
                     myNumbersBtn.classList.remove('hidden');
@@ -686,7 +848,6 @@
         }
 
         function updateHeaderInfo() {
-            document.getElementById('ticketPriceDisplay').textContent = appConfig.pricePerNumber.toFixed(2).replace('.', ',');
             document.getElementById('dispPhone').textContent = appConfig.whatsappPhone.replace(/^55/, '');
             document.getElementById('pixKeyText').textContent = appConfig.pixKey;
             
@@ -937,10 +1098,8 @@
             if (!userToDelete) return;
 
             if (confirm(`Tem certeza que deseja EXCLUIR a conta de "${userToDelete.name}"? As reservas deste usuário também serão canceladas.`)) {
-                // Remover o usuário
                 db.ref('users/' + userId).remove();
 
-                // Remover todas as reservas associadas a esse usuário
                 Object.values(numberReservations).forEach(r => {
                     if (r.userId === userId || r.customerPhone === userToDelete.phone) {
                         db.ref('reservations/' + r.id).remove();
