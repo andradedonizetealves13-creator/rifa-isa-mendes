@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>isabellamendesstudio - Sorteio Especial</title>
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -11,6 +12,10 @@
     <!-- Google Fonts: Playfair Display + Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     
+    <!-- Firebase SDK (Compat v9) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -34,10 +39,7 @@
         }
     </script>
     <style>
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { -webkit-tap-highlight-color: transparent; }
         body {
             background-color: #380213;
             background-image: radial-gradient(circle at 50% 20%, #52061f 0%, #380213 70%, #24000b 100%);
@@ -45,20 +47,15 @@
             font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
         }
-
-        /* Animação de Shake/Tremor para Erro */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20%, 60% { transform: translateX(-8px); }
             40%, 80% { transform: translateX(8px); }
         }
-
         .shake-error {
             animation: shake 0.4s ease-in-out;
             border-color: #ef4444 !important;
         }
-
-        /* Estilo dos números da rifa - Otimizado para Mobile */
         .number-btn {
             background-color: #fde8ef;
             color: #380213;
@@ -75,30 +72,18 @@
             cursor: pointer;
             touch-action: manipulation;
         }
-
-        @media (min-width: 640px) {
-            .number-btn {
-                font-size: 1.1rem;
-            }
-        }
-
-        .number-btn:active:not(.reserved):not(.confirmed) {
-            transform: scale(0.92);
-        }
-
+        @media (min-width: 640px) { .number-btn { font-size: 1.1rem; } }
+        .number-btn:active:not(.reserved):not(.confirmed) { transform: scale(0.92); }
         .number-btn:hover:not(.reserved):not(.confirmed) {
             background-color: #ffffff;
             box-shadow: 0 4px 12px rgba(253, 232, 239, 0.4);
         }
-
         .number-btn.selected {
             background-color: #10b981 !important;
             color: #ffffff !important;
             box-shadow: 0 0 10px #10b981;
             transform: scale(1.02);
         }
-
-        /* Estado Reservado (Aguardando Aprovação) */
         .number-btn.reserved {
             background-color: #24000b !important;
             color: #888888 !important;
@@ -106,8 +91,6 @@
             cursor: not-allowed;
             opacity: 0.6;
         }
-
-        /* Estado Confirmado / Pago */
         .number-btn.confirmed {
             background-color: #1c0109 !important;
             color: #4a1525 !important;
@@ -115,17 +98,12 @@
             opacity: 0.35;
             box-shadow: none;
         }
-
         .custom-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        /* Barra de rolamento personalizada para tabelas mobile */
-        .custom-scroll::-webkit-scrollbar {
-            height: 6px;
-        }
+        .custom-scroll::-webkit-scrollbar { height: 6px; }
         .custom-scroll::-webkit-scrollbar-thumb {
             background: rgba(253, 232, 239, 0.2);
             border-radius: 4px;
@@ -147,7 +125,6 @@
                 <p class="text-[11px] sm:text-xs text-white/70 mt-1">Acesse sua conta para escolher seus números</p>
             </div>
 
-            <!-- MENSAGEM DE ERRO DO LOGIN -->
             <div id="loginErrorMsg" class="hidden mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-xs font-semibold flex items-center gap-2">
                 <i class="fa-solid fa-triangle-exclamation text-red-400 text-sm"></i>
                 <span id="loginErrorText">E-mail ou senha está incorreto</span>
@@ -185,7 +162,6 @@
                 <p class="text-[11px] sm:text-xs text-white/70 mt-0.5">Preencha seus dados para começar</p>
             </div>
 
-            <!-- MENSAGEM DE ERRO DO CADASTRO -->
             <div id="registerErrorMsg" class="hidden mb-3 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-xs font-semibold flex items-center gap-2">
                 <i class="fa-solid fa-triangle-exclamation text-red-400 text-sm"></i>
                 <span id="registerErrorText">Verifique as informações preenchidas</span>
@@ -249,24 +225,16 @@
 
     <!-- ÁREA PÚBLICA (VISÃO DO CLIENTE) -->
     <main id="clientView" class="max-w-3xl mx-auto px-3 sm:px-4">
-        
-        <!-- CABEÇALHO DO SORTEIO -->
         <section class="text-center mb-6 sm:mb-8">
             <h1 class="font-serif text-3xl sm:text-5xl font-extrabold tracking-widest text-pinkAccent uppercase mb-4 sm:mb-6 drop-shadow-md">
                 SORTEIO
             </h1>
 
-            <!-- Grid de Informações e Prêmios -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-5 sm:mb-6">
-                
-                <!-- Prêmio 1 -->
                 <div class="flex flex-col items-center">
-                    <div class="mb-1 sm:mb-2 text-pinkAccent hidden sm:block">
-                        <i class="fa-solid fa-gift text-3xl"></i>
-                    </div>
                     <div class="w-full bg-pinkAccent rounded-xl overflow-hidden shadow-lg border border-pinkAccent/20">
                         <div class="bg-wine-800 text-pinkAccent py-1.5 px-3 font-serif font-bold text-xs sm:text-sm tracking-wide flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-gift sm:hidden text-pinkAccent"></i> Prêmio 1:
+                            <i class="fa-solid fa-gift text-pinkAccent"></i> Prêmio 1:
                         </div>
                         <div class="p-2.5 sm:p-3 text-wine-900 font-bold text-sm sm:text-base min-h-[48px] sm:min-h-[60px] flex items-center justify-center">
                             Um perfume Árabe
@@ -274,14 +242,10 @@
                     </div>
                 </div>
 
-                <!-- Valor por número -->
                 <div class="flex flex-col items-center">
-                    <div class="mb-1 sm:mb-2 text-pinkAccent hidden sm:block">
-                        <i class="fa-solid fa-sack-dollar text-3xl"></i>
-                    </div>
                     <div class="w-full bg-pinkAccent rounded-xl overflow-hidden shadow-lg border border-pinkAccent/20">
                         <div class="bg-wine-800 text-pinkAccent py-1.5 px-3 font-serif font-bold text-xs sm:text-sm tracking-wide flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-sack-dollar sm:hidden text-pinkAccent"></i> Valor por número:
+                            <i class="fa-solid fa-sack-dollar text-pinkAccent"></i> Valor por número:
                         </div>
                         <div class="p-2.5 sm:p-3 text-wine-900 font-extrabold text-xl sm:text-2xl min-h-[48px] sm:min-h-[60px] flex items-center justify-center">
                             R$<span id="ticketPriceDisplay">12,00</span>
@@ -289,30 +253,23 @@
                     </div>
                 </div>
 
-                <!-- Prêmio 2 -->
                 <div class="flex flex-col items-center">
-                    <div class="mb-1 sm:mb-2 text-pinkAccent hidden sm:block">
-                        <i class="fa-solid fa-wine-glass text-3xl"></i>
-                    </div>
                     <div class="w-full bg-pinkAccent rounded-xl overflow-hidden shadow-lg border border-pinkAccent/20">
                         <div class="bg-wine-800 text-pinkAccent py-1.5 px-3 font-serif font-bold text-xs sm:text-sm tracking-wide flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-wine-glass sm:hidden text-pinkAccent"></i> Prêmio 2:
+                            <i class="fa-solid fa-wine-glass text-pinkAccent"></i> Prêmio 2:
                         </div>
                         <div class="p-2.5 sm:p-3 text-wine-900 font-bold text-xs sm:text-sm min-h-[48px] sm:min-h-[60px] flex items-center justify-center leading-snug">
                             Cesta com um vinho + acompanhamentos
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Faixa de Contato (BOTÃO CLICÁVEL DO WHATSAPP) -->
             <a id="mainWhatsappBtn" href="https://wa.me/5519989517874" target="_blank" class="w-full sm:w-auto bg-wine-800 hover:bg-wine-900 border border-pinkAccent/30 hover:border-pinkAccent/60 rounded-xl sm:rounded-2xl py-2.5 sm:py-3 px-5 inline-flex items-center justify-center gap-2.5 shadow-lg active:scale-95 transition transform cursor-pointer">
                 <i class="fa-brands fa-whatsapp text-green-400 text-xl sm:text-2xl"></i>
                 <span class="font-mono font-bold text-base sm:text-lg tracking-wider text-pinkAccent" id="dispPhone">19 98951-7874</span>
             </a>
 
-            <!-- Boa Sorte -->
             <div class="mt-4 sm:mt-6">
                 <h2 class="font-serif italic text-2xl sm:text-4xl text-pinkAccent font-semibold tracking-wide drop-shadow">
                     Boa sorte
@@ -320,34 +277,17 @@
             </div>
         </section>
 
-        <!-- Legenda do Grid -->
         <div class="flex flex-wrap justify-center items-center gap-3 text-[11px] sm:text-xs font-medium mb-4 sm:mb-6 bg-wine-950/60 p-2.5 sm:p-3 rounded-xl border border-white/5">
-            <div class="flex items-center gap-1.5">
-                <span class="w-3.5 h-3.5 rounded bg-pinkAccent inline-block"></span>
-                <span>Livre</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="w-3.5 h-3.5 rounded bg-emerald-500 inline-block"></span>
-                <span>Selecionado</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="w-3.5 h-3.5 rounded bg-wine-950 border border-red-500/80 inline-block"></span>
-                <span>Reservado</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="w-3.5 h-3.5 rounded bg-wine-950 opacity-40 inline-block"></span>
-                <span>Pago</span>
-            </div>
+            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-pinkAccent inline-block"></span><span>Livre</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-emerald-500 inline-block"></span><span>Selecionado</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-wine-950 border border-red-500/80 inline-block"></span><span>Reservado</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-wine-950 opacity-40 inline-block"></span><span>Pago</span></div>
         </div>
 
-        <!-- GRID DE NÚMEROS (1 A 192 - Adaptável para Mobile) -->
         <section class="custom-card p-2.5 sm:p-5 rounded-2xl shadow-2xl mb-6 sm:mb-8">
-            <div id="numbersGrid" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2">
-                <!-- Gerado via JavaScript -->
-            </div>
+            <div id="numbersGrid" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2"></div>
         </section>
 
-        <!-- BARRA FIXA / RESUMO DE RESERVA -->
         <section id="checkoutSection" class="fixed bottom-0 left-0 right-0 bg-wine-950/95 border-t border-pinkAccent/30 p-3 sm:p-4 backdrop-blur-md z-40 transition-transform transform translate-y-full shadow-2xl">
             <div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div class="text-center sm:text-left w-full sm:w-auto">
@@ -356,55 +296,34 @@
                     <div id="totalAmountText" class="text-xs sm:text-sm text-emerald-400 font-bold">Total: R$ 0,00</div>
                 </div>
                 <div class="flex gap-2 w-full sm:w-auto">
-                    <button onclick="clearSelection()" class="px-3.5 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold active:scale-95 transition">
-                        Limpar
-                    </button>
+                    <button onclick="clearSelection()" class="px-3.5 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold active:scale-95 transition">Limpar</button>
                     <button onclick="confirmAndReserve()" class="flex-1 sm:flex-none px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2 text-sm">
                         Reservar Agora <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <!-- PAINEL ADMINISTRATIVO (RESTRITO AO ADMIN) -->
+    <!-- PAINEL ADMINISTRATIVO -->
     <main id="adminView" class="max-w-4xl mx-auto px-3 sm:px-4 hidden">
         <div id="adminDashboard" class="space-y-4 sm:space-y-6 my-4 sm:my-6">
-            
             <div class="flex flex-wrap justify-between items-center gap-3 bg-wine-950/80 p-3.5 sm:p-4 rounded-xl border border-white/10">
                 <div>
                     <h2 class="font-serif text-lg sm:text-2xl text-pinkAccent font-bold">Painel do Administrador</h2>
-                    <p class="text-[11px] sm:text-xs text-white/60">Aprovação individual e usuários</p>
+                    <p class="text-[11px] sm:text-xs text-white/60">Sincronizado na Nuvem com Firebase</p>
                 </div>
             </div>
 
-            <!-- Métricas Rápidas -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-                <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center">
-                    <span class="text-[10px] sm:text-xs text-white/60">Confirmados/Pagos</span>
-                    <div id="statConfirmed" class="text-lg sm:text-xl font-bold text-emerald-400">0</div>
-                </div>
-                <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center">
-                    <span class="text-[10px] sm:text-xs text-white/60">Pendentes</span>
-                    <div id="statPending" class="text-lg sm:text-xl font-bold text-amber-400">0</div>
-                </div>
-                <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center">
-                    <span class="text-[10px] sm:text-xs text-white/60">Disponíveis</span>
-                    <div id="statAvailable" class="text-lg sm:text-xl font-bold text-pinkAccent">192</div>
-                </div>
-                <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center">
-                    <span class="text-[10px] sm:text-xs text-white/60">Arrecadação</span>
-                    <div id="statTotalMoney" class="text-lg sm:text-xl font-bold text-goldAccent">R$ 0,00</div>
-                </div>
+                <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Confirmados/Pagos</span><div id="statConfirmed" class="text-lg sm:text-xl font-bold text-emerald-400">0</div></div>
+                <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Pendentes</span><div id="statPending" class="text-lg sm:text-xl font-bold text-amber-400">0</div></div>
+                <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Disponíveis</span><div id="statAvailable" class="text-lg sm:text-xl font-bold text-pinkAccent">192</div></div>
+                <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Arrecadação</span><div id="statTotalMoney" class="text-lg sm:text-xl font-bold text-goldAccent">R$ 0,00</div></div>
             </div>
 
-            <!-- TABELA 1: GERENCIAMENTO DE NÚMEROS RESERVADOS -->
             <div class="custom-card p-3 sm:p-4 rounded-2xl overflow-hidden">
-                <h3 class="font-bold text-sm sm:text-lg text-pinkAccent mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-list-check"></i> Gerenciamento de Números
-                </h3>
-
+                <h3 class="font-bold text-sm sm:text-lg text-pinkAccent mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Gerenciamento de Números</h3>
                 <div class="overflow-x-auto custom-scroll">
                     <table class="w-full text-left text-xs sm:text-sm whitespace-nowrap">
                         <thead class="bg-wine-950 text-pinkAccent border-b border-white/10">
@@ -417,19 +336,13 @@
                                 <th class="p-2.5 text-right">Ação</th>
                             </tr>
                         </thead>
-                        <tbody id="adminReservationsTable" class="divide-y divide-white/5">
-                            <!-- Preenchido dinamicamente -->
-                        </tbody>
+                        <tbody id="adminReservationsTable" class="divide-y divide-white/5"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- TABELA 2: GERENCIAMENTO DE USUÁRIOS E ALTERAÇÃO DE SENHA/DADOS -->
             <div class="custom-card p-3 sm:p-4 rounded-2xl overflow-hidden">
-                <h3 class="font-bold text-sm sm:text-lg text-pinkAccent mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-users-gear"></i> Controle de Usuários Cadastrados
-                </h3>
-
+                <h3 class="font-bold text-sm sm:text-lg text-pinkAccent mb-3 flex items-center gap-2"><i class="fa-solid fa-users-gear"></i> Controle de Usuários Cadastrados</h3>
                 <div class="overflow-x-auto custom-scroll">
                     <table class="w-full text-left text-xs sm:text-sm whitespace-nowrap">
                         <thead class="bg-wine-950 text-pinkAccent border-b border-white/10">
@@ -441,61 +354,27 @@
                                 <th class="p-2.5 text-right">Editar</th>
                             </tr>
                         </thead>
-                        <tbody id="adminUsersTable" class="divide-y divide-white/5">
-                            <!-- Preenchido dinamicamente -->
-                        </tbody>
+                        <tbody id="adminUsersTable" class="divide-y divide-white/5"></tbody>
                     </table>
                 </div>
             </div>
-
-            <!-- Configurações Rápidas -->
-            <div class="custom-card p-3.5 sm:p-4 rounded-2xl">
-                <h3 class="font-bold text-sm sm:text-lg text-pinkAccent mb-3">Configurações Gerais</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                    <div>
-                        <label class="block text-white/70 mb-1">Valor por Bilhete (R$):</label>
-                        <input type="number" id="cfgPrice" step="0.5" value="12" class="w-full bg-wine-950 border border-white/20 rounded-lg p-2 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-white/70 mb-1">WhatsApp de Notificação:</label>
-                        <input type="text" id="cfgPhone" value="5519989517874" class="w-full bg-wine-950 border border-white/20 rounded-lg p-2 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-white/70 mb-1">Chave PIX (CPF):</label>
-                        <input type="text" id="cfgPix" value="519.223.948-66" class="w-full bg-wine-950 border border-white/20 rounded-lg p-2 text-white">
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="saveAdminConfigs()" class="w-full bg-pinkAccent text-wine-900 font-bold py-2 rounded-lg hover:bg-white active:scale-95 transition">
-                            Salvar Alterações
-                        </button>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </main>
 
-    <!-- MODAL INSTRUÇÕES DE PAGAMENTO PIX -->
+    <!-- MODAIS DE INTERAÇÃO -->
     <div id="pixInstructionsModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/40 shadow-2xl text-center relative my-auto">
-            
             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-2.5 border border-emerald-500/40">
                 <i class="fa-solid fa-clock text-xl sm:text-2xl"></i>
             </div>
-
             <h3 class="font-serif text-xl sm:text-2xl text-pinkAccent font-bold mb-1">Reserva Realizada!</h3>
-            
-            <!-- EXIBIÇÃO DO VALOR TOTAL A SER PAGO -->
             <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-2.5 mb-2.5 text-center">
                 <span class="text-[11px] text-white/80 block uppercase tracking-wider font-medium">Valor Total a Pagar:</span>
                 <span id="pixTotalValueDisplay" class="font-extrabold text-xl sm:text-2xl text-emerald-400">R$ 0,00</span>
             </div>
-
             <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-2.5 mb-3 text-xs text-amber-200">
                 Efetue o pagamento e envie o comprovante para o whatsapp abaixo. Expira em <strong>24 horas</strong>.
             </div>
-
-            <!-- Caixinha Chave PIX -->
             <div class="bg-wine-950 p-3 rounded-xl border border-white/15 mb-3 text-left">
                 <div class="text-[10px] uppercase tracking-wider text-pinkAccent/70 font-semibold mb-1">Chave PIX (CPF)</div>
                 <div class="flex items-center justify-between gap-2">
@@ -505,78 +384,59 @@
                     </button>
                 </div>
             </div>
-
             <div class="space-y-2">
                 <a id="modalWhatsappBtn" href="https://wa.me/5519989517874" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 sm:py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-95">
                     <i class="fa-brands fa-whatsapp text-lg"></i> Enviar Comprovante no WhatsApp
                 </a>
-                <button onclick="closeModal('pixInstructionsModal')" class="w-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold py-2 sm:py-2.5 rounded-xl transition">
-                    Fechar Janela
-                </button>
+                <button onclick="closeModal('pixInstructionsModal')" class="w-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold py-2 sm:py-2.5 rounded-xl transition">Fechar Janela</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL EDITAR USUÁRIO (ADMIN) -->
     <div id="editUserModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto">
-            <button onclick="closeModal('editUserModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-
+            <button onclick="closeModal('editUserModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="font-serif text-lg sm:text-xl text-pinkAccent font-bold mb-2">Editar Usuário</h3>
-            <p class="text-xs text-white/70 mb-3">Altere nome, e-mail, telefone ou senha do cliente.</p>
-
             <form onsubmit="saveUserEditsByAdmin(event)" class="space-y-2.5">
                 <input type="hidden" id="editUserId">
-                <div>
-                    <label class="block text-xs font-semibold text-pinkAccent mb-0.5">Nome Completo</label>
-                    <input type="text" id="editUserName" required class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-pinkAccent mb-0.5">WhatsApp / Telefone</label>
-                    <input type="tel" id="editUserPhone" required maxlength="15" oninput="maskPhone(this)" class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-pinkAccent mb-0.5">E-mail</label>
-                    <input type="email" id="editUserEmail" required class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-pinkAccent mb-0.5">Nova Senha</label>
-                    <input type="text" id="editUserPassword" required class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent">
-                </div>
-
+                <div><label class="block text-xs font-semibold text-pinkAccent mb-0.5">Nome Completo</label><input type="text" id="editUserName" required class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent"></div>
+                <div><label class="block text-xs font-semibold text-pinkAccent mb-0.5">WhatsApp / Telefone</label><input type="tel" id="editUserPhone" required maxlength="15" oninput="maskPhone(this)" class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent"></div>
+                <div><label class="block text-xs font-semibold text-pinkAccent mb-0.5">E-mail</label><input type="email" id="editUserEmail" required class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent"></div>
+                <div><label class="block text-xs font-semibold text-pinkAccent mb-0.5">Nova Senha</label><input type="text" id="editUserPassword" required class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent"></div>
                 <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeModal('editUserModal')" class="w-1/2 bg-white/10 hover:bg-white/20 text-white font-semibold py-2 rounded-xl text-xs">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="w-1/2 bg-pinkAccent text-wine-900 font-bold py-2 rounded-xl hover:bg-white active:scale-95 transition text-xs">
-                        Salvar Alterações
-                    </button>
+                    <button type="button" onclick="closeModal('editUserModal')" class="w-1/2 bg-white/10 hover:bg-white/20 text-white font-semibold py-2 rounded-xl text-xs">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-pinkAccent text-wine-900 font-bold py-2 rounded-xl hover:bg-white active:scale-95 transition text-xs">Salvar Alterações</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL CONSULTAR MEUS NÚMEROS -->
     <div id="myNumbersModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto">
-            <button onclick="closeModal('myNumbersModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-
+            <button onclick="closeModal('myNumbersModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="font-serif text-lg sm:text-xl text-pinkAccent font-bold mb-2">Consultar Meus Números</h3>
-            <p class="text-xs text-white/70 mb-3">Veja o histórico de reservas da sua conta.</p>
-
-            <div id="searchResults" class="max-h-56 overflow-y-auto space-y-2 custom-scroll">
-                <!-- Resultado automático -->
-            </div>
+            <div id="searchResults" class="max-h-56 overflow-y-auto space-y-2 custom-scroll"></div>
         </div>
     </div>
 
-    <!-- LÓGICA EM JAVASCRIPT -->
     <script>
-        // CONFIGURAÇÕES PADRÃO DO SISTEMA
+        // CONFIGURAÇÕES DO FIREBASE REALTIME DATABASE
+        const firebaseConfig = {
+            apiKey: "AIzaSy_SUA_API_KEY_AQUI",
+            authDomain: "isa-mendes-rifa.firebaseapp.com",
+            databaseURL: "https://isa-mendes-rifa-default-rtdb.firebaseio.com",
+            projectId: "isa-mendes-rifa",
+            storageBucket: "isa-mendes-rifa.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef123456"
+        };
+
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
         const DEFAULT_CONFIG = {
             totalNumbers: 192,
             pricePerNumber: 12.00,
@@ -586,30 +446,42 @@
             pixKey: '519.223.948-66'
         };
 
-        // ESTADO GLOBAL DA APLICAÇÃO (LOCALSTORAGE)
-        let appConfig = JSON.parse(localStorage.getItem('rifa_config')) || DEFAULT_CONFIG;
-        let numberReservations = JSON.parse(localStorage.getItem('rifa_number_reservations')) || [];
-        let users = JSON.parse(localStorage.getItem('rifa_users')) || [];
+        let appConfig = DEFAULT_CONFIG;
+        let numberReservations = {};
+        let users = {};
         let currentUser = JSON.parse(localStorage.getItem('rifa_current_user')) || null;
-        
         let selectedNumbers = [];
 
-        // FUNÇÕES DE EXIBIÇÃO DE ERRO COM ANIMAÇÃO DE SHAKE/TREMOR
+        // CONEXÃO EM TEMPO REAL COM O FIREBASE
+        document.addEventListener('DOMContentLoaded', () => {
+            // Escutar Usuários em tempo real
+            db.ref('users').on('value', (snapshot) => {
+                users = snapshot.val() || {};
+                renderAdminDashboard();
+            });
+
+            // Escutar Reservas de Números em tempo real
+            db.ref('reservations').on('value', (snapshot) => {
+                numberReservations = snapshot.val() || {};
+                renderGrid();
+                renderAdminDashboard();
+            });
+
+            updateHeaderInfo();
+            checkUserSession();
+            setInterval(cleanExpiredReservations, 60000);
+        });
+
         function triggerShakeError(boxId, msgId, textId, message) {
             const box = document.getElementById(boxId);
             const msgContainer = document.getElementById(msgId);
             const msgText = document.getElementById(textId);
-
             msgText.textContent = message;
             msgContainer.classList.remove('hidden');
-
             box.classList.remove('shake-error');
             void box.offsetWidth;
             box.classList.add('shake-error');
-
-            setTimeout(() => {
-                box.classList.remove('shake-error');
-            }, 500);
+            setTimeout(() => { box.classList.remove('shake-error'); }, 500);
         }
 
         function clearErrorMsgs() {
@@ -617,33 +489,15 @@
             document.getElementById('registerErrorMsg').classList.add('hidden');
         }
 
-        // MÁSCARA AUTOMÁTICA DE TELEFONE (DDD) 9XXXX-XXXX
         function maskPhone(input) {
             let value = input.value.replace(/\D/g, '');
             if (value.length > 11) value = value.slice(0, 11);
-            
-            if (value.length > 6) {
-                value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
-            } else if (value.length > 2) {
-                value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
-            } else if (value.length > 0) {
-                value = `(${value}`;
-            }
-            
+            if (value.length > 6) value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+            else if (value.length > 2) value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            else if (value.length > 0) value = `(${value}`;
             input.value = value;
         }
 
-        // INICIALIZAÇÃO
-        document.addEventListener('DOMContentLoaded', () => {
-            cleanExpiredReservations();
-            renderGrid();
-            updateHeaderInfo();
-            checkUserSession();
-
-            setInterval(cleanExpiredReservations, 60000);
-        });
-
-        // AUTENTICAÇÃO E SESSÃO
         function switchAuthMode(mode) {
             clearAuthForms();
             clearErrorMsgs();
@@ -684,28 +538,31 @@
                 return;
             }
 
-            const emailExists = users.find(u => u.email === email);
-            if (emailExists) {
+            const usersArray = Object.values(users);
+            if (usersArray.some(u => u.email === email)) {
                 triggerShakeError('registerBox', 'registerErrorMsg', 'registerErrorText', 'Este e-mail já está cadastrado!');
                 return;
             }
-
-            const phoneExists = users.find(u => u.phone.replace(/\D/g, '') === cleanPhone);
-            if (phoneExists) {
+            if (usersArray.some(u => u.phone.replace(/\D/g, '') === cleanPhone)) {
                 triggerShakeError('registerBox', 'registerErrorMsg', 'registerErrorText', 'Este WhatsApp já está cadastrado!');
                 return;
             }
 
-            const newUser = { id: 'USR-' + Date.now(), name, phone, email, password, isAdmin: false };
-            users.push(newUser);
-            localStorage.setItem('rifa_users', JSON.stringify(users));
+            const newUserId = 'USR-' + Date.now();
+            const newUser = { id: newUserId, name, phone, email, password, isAdmin: false };
 
-            currentUser = newUser;
-            localStorage.setItem('rifa_current_user', JSON.stringify(currentUser));
-            
-            clearAuthForms();
-            checkUserSession();
-            alert('Cadastro realizado com sucesso!');
+            // Salvar no Firebase
+            db.ref('users/' + newUserId).set(newUser, (err) => {
+                if (err) {
+                    alert('Erro ao salvar na nuvem.');
+                } else {
+                    currentUser = newUser;
+                    localStorage.setItem('rifa_current_user', JSON.stringify(currentUser));
+                    clearAuthForms();
+                    checkUserSession();
+                    alert('Cadastro realizado com sucesso!');
+                }
+            });
         }
 
         function handleLogin(e) {
@@ -715,7 +572,6 @@
             const loginId = document.getElementById('loginId').value.trim().toLowerCase();
             const pass = document.getElementById('loginPassword').value;
 
-            // LOGIN DO ADMINISTRADOR
             if (loginId === appConfig.adminEmail.toLowerCase() && pass === appConfig.adminPassword) {
                 currentUser = {
                     id: 'ADMIN',
@@ -730,9 +586,9 @@
                 return;
             }
 
-            // LOGIN DO CLIENTE
             const cleanLoginPhone = loginId.replace(/\D/g, '');
-            const user = users.find(u => 
+            const usersArray = Object.values(users);
+            const user = usersArray.find(u => 
                 (u.email === loginId || u.phone === loginId || (cleanLoginPhone.length > 0 && u.phone.replace(/\D/g, '') === cleanLoginPhone)) 
                 && u.password === pass
             );
@@ -793,25 +649,19 @@
             checkUserSession();
         }
 
-        // RESERVA DIRETA
         function confirmAndReserve() {
-            if (!currentUser) {
-                checkUserSession();
-                return;
-            }
-
-            if (selectedNumbers.length === 0) {
-                alert('Por favor, selecione ao menos um número!');
-                return;
-            }
+            if (!currentUser) { checkUserSession(); return; }
+            if (selectedNumbers.length === 0) { alert('Por favor, selecione ao menos um número!'); return; }
 
             const totalPay = selectedNumbers.length * appConfig.pricePerNumber;
             const batchId = 'BATCH-' + Date.now();
             const createdAt = new Date().toISOString();
 
+            let updates = {};
             selectedNumbers.forEach(num => {
-                numberReservations.push({
-                    id: 'NUM-' + num + '-' + Date.now(),
+                const resId = 'NUM-' + num + '-' + Date.now();
+                updates['reservations/' + resId] = {
+                    id: resId,
                     batchId: batchId,
                     number: num,
                     userId: currentUser.id,
@@ -820,28 +670,32 @@
                     customerEmail: currentUser.email,
                     status: 'pending',
                     createdAt: createdAt
-                });
+                };
             });
 
-            saveReservations();
+            // Enviar alterações para o Firebase
+            db.ref().update(updates, (err) => {
+                if (err) {
+                    alert('Erro ao realizar reserva na nuvem.');
+                } else {
+                    const totalFormatted = totalPay.toFixed(2).replace('.', ',');
+                    document.getElementById('pixTotalValueDisplay').textContent = `R$ ${totalFormatted}`;
 
-            const totalFormatted = totalPay.toFixed(2).replace('.', ',');
-            document.getElementById('pixTotalValueDisplay').textContent = `R$ ${totalFormatted}`;
+                    const numbersFormatted = selectedNumbers.join(', ');
+                    const waMsg = encodeURIComponent(
+                        `Olá! Fiz a reserva dos números: *${numbersFormatted}*\n` +
+                        `Nome: *${currentUser.name}*\n` +
+                        `Total: *R$ ${totalFormatted}*\n\n` +
+                        `Estou enviando o comprovante de pagamento!`
+                    );
+                    
+                    document.getElementById('modalWhatsappBtn').href = `https://wa.me/${appConfig.whatsappPhone}?text=${waMsg}`;
 
-            const numbersFormatted = selectedNumbers.join(', ');
-            const waMsg = encodeURIComponent(
-                `Olá! Fiz a reserva dos números: *${numbersFormatted}*\n` +
-                `Nome: *${currentUser.name}*\n` +
-                `Total: *R$ ${totalFormatted}*\n\n` +
-                `Estou enviando o comprovante de pagamento!`
-            );
-            
-            const waBtn = document.getElementById('modalWhatsappBtn');
-            waBtn.href = `https://wa.me/${appConfig.whatsappPhone}?text=${waMsg}`;
-
-            selectedNumbers = [];
-            renderGrid();
-            openModal('pixInstructionsModal');
+                    selectedNumbers = [];
+                    renderGrid();
+                    openModal('pixInstructionsModal');
+                }
+            });
         }
 
         function updateHeaderInfo() {
@@ -854,42 +708,29 @@
                 const clientNameMsg = (currentUser && currentUser.name) ? `Olá sou ${currentUser.name}, estou com uma duvida sobre a compra da rifa` : 'Olá, estou com uma duvida sobre a compra da rifa';
                 mainWaBtn.href = `https://wa.me/${appConfig.whatsappPhone}?text=${encodeURIComponent(clientNameMsg)}`;
             }
-
-            const waBtn = document.getElementById('modalWhatsappBtn');
-            if(waBtn && (!waBtn.href || waBtn.href.includes('undefined'))) {
-                waBtn.href = `https://wa.me/${appConfig.whatsappPhone}`;
-            }
         }
 
         function cleanExpiredReservations() {
             const now = new Date().getTime();
             const twentyFourHoursMs = 24 * 60 * 60 * 1000;
-            let hasChanges = false;
 
-            numberReservations = numberReservations.filter(res => {
+            Object.values(numberReservations).forEach(res => {
                 if (res.status === 'pending') {
                     const reservationTime = new Date(res.createdAt).getTime();
                     if (now - reservationTime > twentyFourHoursMs) {
-                        hasChanges = true;
-                        return false;
+                        db.ref('reservations/' + res.id).remove();
                     }
                 }
-                return true;
             });
-
-            if (hasChanges) {
-                saveReservations();
-                renderGrid();
-            }
         }
 
         function renderGrid() {
             const gridContainer = document.getElementById('numbersGrid');
-            if(!gridContainer) return;
+            if (!gridContainer) return;
             gridContainer.innerHTML = '';
 
             const numberStatusMap = {};
-            numberReservations.forEach(res => {
+            Object.values(numberReservations).forEach(res => {
                 numberStatusMap[res.number] = res.status;
             });
 
@@ -900,33 +741,23 @@
                 btn.textContent = i;
 
                 const status = numberStatusMap[i];
-
                 if (status === 'confirmed') {
                     btn.classList.add('confirmed');
-                    btn.title = 'Número Vendido / Confirmado';
                 } else if (status === 'pending') {
                     btn.classList.add('reserved');
-                    btn.title = 'Reservado (Aguardando Aprovação de Pagamento)';
                 } else {
-                    if (selectedNumbers.includes(i)) {
-                        btn.classList.add('selected');
-                    }
+                    if (selectedNumbers.includes(i)) btn.classList.add('selected');
                     btn.onclick = () => toggleNumberSelection(i);
                 }
-
                 gridContainer.appendChild(btn);
             }
-
             updateCheckoutBar();
         }
 
         function toggleNumberSelection(num) {
             const index = selectedNumbers.indexOf(num);
-            if (index > -1) {
-                selectedNumbers.splice(index, 1);
-            } else {
-                selectedNumbers.push(num);
-            }
+            if (index > -1) selectedNumbers.splice(index, 1);
+            else selectedNumbers.push(num);
             selectedNumbers.sort((a, b) => a - b);
             renderGrid();
         }
@@ -939,73 +770,45 @@
         function updateCheckoutBar() {
             const bar = document.getElementById('checkoutSection');
             if (!bar) return;
-            const countText = document.getElementById('selectedCountText');
-            const amountText = document.getElementById('totalAmountText');
 
             if (selectedNumbers.length > 0) {
                 bar.classList.remove('translate-y-full');
-                countText.textContent = `${selectedNumbers.length} número(s): [ ${selectedNumbers.join(', ')} ]`;
+                document.getElementById('selectedCountText').textContent = `${selectedNumbers.length} número(s): [ ${selectedNumbers.join(', ')} ]`;
                 const total = selectedNumbers.length * appConfig.pricePerNumber;
-                amountText.textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+                document.getElementById('totalAmountText').textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
             } else {
                 bar.classList.add('translate-y-full');
             }
         }
 
-        // COPIAR CHAVE PIX COM FALLBACK COMPATÍVEL
         function copyPixKey() {
             const pixKey = appConfig.pixKey;
             const btnLabel = document.getElementById('copyBtnLabel');
-
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(pixKey).then(() => {
-                    showCopiedSuccess(btnLabel);
-                }).catch(() => {
-                    fallbackCopyText(pixKey, btnLabel);
-                });
+                navigator.clipboard.writeText(pixKey).then(() => { showCopiedSuccess(btnLabel); });
             } else {
-                fallbackCopyText(pixKey, btnLabel);
-            }
-        }
-
-        function fallbackCopyText(text, btnLabel) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = pixKey;
+                document.body.appendChild(textArea);
+                textArea.select();
                 document.execCommand('copy');
+                document.body.removeChild(textArea);
                 showCopiedSuccess(btnLabel);
-            } catch (err) {
-                alert('Chave PIX: ' + text);
             }
-            document.body.removeChild(textArea);
         }
 
         function showCopiedSuccess(btnLabel) {
             if (btnLabel) {
                 btnLabel.textContent = 'Copiado!';
-                setTimeout(() => {
-                    btnLabel.textContent = 'Copiar';
-                }, 2000);
-            } else {
-                alert('Chave PIX copiada!');
+                setTimeout(() => { btnLabel.textContent = 'Copiar'; }, 2000);
             }
         }
 
         function searchCustomerTickets() {
             const resultsContainer = document.getElementById('searchResults');
+            if (!currentUser) return;
 
-            if (!currentUser) {
-                resultsContainer.innerHTML = '<div class="text-center text-xs text-red-400 py-2">Você não está logado.</div>';
-                return;
-            }
-
-            const userRes = numberReservations.filter(r => r.userId === currentUser.id || r.customerPhone === currentUser.phone);
-
+            const userRes = Object.values(numberReservations).filter(r => r.userId === currentUser.id || r.customerPhone === currentUser.phone);
             if (userRes.length === 0) {
                 resultsContainer.innerHTML = '<div class="text-center text-xs text-white/50 py-4">Nenhuma reserva encontrada para sua conta.</div>';
                 return;
@@ -1032,7 +835,8 @@
             let pendingNumCount = 0;
             let totalMoney = 0;
 
-            numberReservations.forEach(r => {
+            const resList = Object.values(numberReservations);
+            resList.forEach(r => {
                 if (r.status === 'confirmed') {
                     confirmedNumCount++;
                     totalMoney += appConfig.pricePerNumber;
@@ -1046,15 +850,13 @@
             document.getElementById('statAvailable').textContent = appConfig.totalNumbers - (confirmedNumCount + pendingNumCount);
             document.getElementById('statTotalMoney').textContent = `R$ ${totalMoney.toFixed(2).replace('.', ',')}`;
 
-            // TABELA 1: RESERVAS POR NÚMERO
+            // Tabela 1: Reservas
             const tableBody = document.getElementById('adminReservationsTable');
             tableBody.innerHTML = '';
-
-            if (numberReservations.length === 0) {
+            if (resList.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-xs text-white/40">Nenhum número reservado até o momento.</td></tr>';
             } else {
-                const sorted = [...numberReservations].reverse();
-                sorted.forEach(res => {
+                resList.reverse().forEach(res => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-white/5 transition';
                     const isExpired = res.status === 'pending' && (new Date().getTime() - new Date(res.createdAt).getTime() > 24 * 60 * 60 * 1000);
@@ -1067,7 +869,7 @@
                             ${res.customerEmail ? `<div class="text-[10px] text-white/50">${res.customerEmail}</div>` : ''}
                         </td>
                         <td class="p-2.5 text-xs text-white/60">
-                            ${new Date(res.createdAt).toLocaleDateString('pt-BR')} ${new Date(res.createdAt).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}
+                            ${new Date(res.createdAt).toLocaleDateString('pt-BR')}
                         </td>
                         <td class="p-2.5">
                             <span class="px-2 py-0.5 rounded text-[10px] font-bold ${res.status === 'confirmed' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">
@@ -1076,39 +878,32 @@
                         </td>
                         <td class="p-2.5 text-right space-x-1">
                             ${res.status === 'pending' ? `
-                                <button onclick="approveSingleNumber('${res.id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold active:scale-95 transition" title="Aprovar Pagamento">
-                                    <i class="fa-solid fa-check"></i> Aprovar
-                                </button>
+                                <button onclick="approveSingleNumber('${res.id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] px-2.5 py-1 rounded-lg font-bold">Aprovar</button>
                             ` : ''}
-                            <button onclick="deleteSingleNumber('${res.id}')" class="bg-red-500/20 hover:bg-red-500/40 text-red-300 text-[11px] px-2 py-1 rounded-lg active:scale-95 transition" title="Rejeitar / Excluir">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                            <button onclick="deleteSingleNumber('${res.id}')" class="bg-red-500/20 hover:bg-red-500/40 text-red-300 text-[11px] px-2 py-1 rounded-lg">Excluir</button>
                         </td>
                     `;
                     tableBody.appendChild(tr);
                 });
             }
 
-            // TABELA 2: GERENCIAMENTO DE USUÁRIOS CADASTRADOS
+            // Tabela 2: Usuários
             const usersTableBody = document.getElementById('adminUsersTable');
             usersTableBody.innerHTML = '';
-
-            if (users.length === 0) {
+            const userList = Object.values(users);
+            if (userList.length === 0) {
                 usersTableBody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-xs text-white/40">Nenhum cliente cadastrado ainda.</td></tr>';
             } else {
-                users.forEach(u => {
+                userList.forEach(u => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-white/5 transition';
-
                     tr.innerHTML = `
                         <td class="p-2.5 font-semibold text-white">${u.name}</td>
                         <td class="p-2.5 text-xs text-emerald-400 font-mono">${u.phone}</td>
                         <td class="p-2.5 text-xs text-white/80">${u.email}</td>
                         <td class="p-2.5 text-xs font-mono text-pinkAccent">${u.password}</td>
                         <td class="p-2.5 text-right">
-                            <button onclick="openEditUserModal('${u.id}')" class="bg-pinkAccent/20 hover:bg-pinkAccent/30 text-pinkAccent text-xs px-2.5 py-1 rounded-lg border border-pinkAccent/30 font-semibold active:scale-95 transition">
-                                <i class="fa-solid fa-pen-to-square"></i> Editar
-                            </button>
+                            <button onclick="openEditUserModal('${u.id}')" class="bg-pinkAccent/20 text-pinkAccent text-xs px-2.5 py-1 rounded-lg border border-pinkAccent/30 font-semibold">Editar</button>
                         </td>
                     `;
                     usersTableBody.appendChild(tr);
@@ -1116,99 +911,54 @@
             }
         }
 
-        // EDIÇÃO DE USUÁRIOS PELO ADMIN
         function openEditUserModal(userId) {
-            const user = users.find(u => u.id === userId);
+            const user = users[userId];
             if (!user) return;
-
             document.getElementById('editUserId').value = user.id;
             document.getElementById('editUserName').value = user.name;
             document.getElementById('editUserPhone').value = user.phone;
             document.getElementById('editUserEmail').value = user.email;
             document.getElementById('editUserPassword').value = user.password;
-
             openModal('editUserModal');
         }
 
         function saveUserEditsByAdmin(e) {
             e.preventDefault();
             const id = document.getElementById('editUserId').value;
-            const name = document.getElementById('editUserName').value.trim();
-            const phone = document.getElementById('editUserPhone').value.trim();
-            const email = document.getElementById('editUserEmail').value.trim().toLowerCase();
-            const password = document.getElementById('editUserPassword').value;
+            const updatedUser = {
+                id: id,
+                name: document.getElementById('editUserName').value.trim(),
+                phone: document.getElementById('editUserPhone').value.trim(),
+                email: document.getElementById('editUserEmail').value.trim().toLowerCase(),
+                password: document.getElementById('editUserPassword').value,
+                isAdmin: false
+            };
 
-            const user = users.find(u => u.id === id);
-            if (user) {
-                user.name = name;
-                user.phone = phone;
-                user.email = email;
-                user.password = password;
-
-                localStorage.setItem('rifa_users', JSON.stringify(users));
-
-                numberReservations.forEach(r => {
-                    if (r.userId === id) {
-                        r.customerName = name;
-                        r.customerPhone = phone;
-                        r.customerEmail = email;
-                    }
-                });
-                saveReservations();
-
-                closeModal('editUserModal');
-                renderAdminDashboard();
-                alert('Dados do usuário atualizados com sucesso!');
-            }
+            db.ref('users/' + id).set(updatedUser, (err) => {
+                if (!err) {
+                    closeModal('editUserModal');
+                    alert('Usuário atualizado na nuvem!');
+                }
+            });
         }
 
         function approveSingleNumber(id) {
-            const res = numberReservations.find(r => r.id === id);
-            if (res) {
-                res.status = 'confirmed';
-                saveReservations();
-                renderGrid();
-                renderAdminDashboard();
-            }
+            db.ref('reservations/' + id + '/status').set('confirmed');
         }
 
         function deleteSingleNumber(id) {
-            if (confirm('Tem certeza que deseja cancelar a reserva deste número específico? Ele voltará a ficar disponível.')) {
-                numberReservations = numberReservations.filter(r => r.id !== id);
-                saveReservations();
-                renderGrid();
-                renderAdminDashboard();
+            if (confirm('Tem certeza que deseja cancelar a reserva deste número?')) {
+                db.ref('reservations/' + id).remove();
             }
-        }
-
-        function saveAdminConfigs() {
-            const price = parseFloat(document.getElementById('cfgPrice').value);
-            const phone = document.getElementById('cfgPhone').value.trim();
-            const pix = document.getElementById('cfgPix').value.trim();
-
-            if (price > 0) appConfig.pricePerNumber = price;
-            if (phone) appConfig.whatsappPhone = phone;
-            if (pix) appConfig.pixKey = pix;
-
-            localStorage.setItem('rifa_config', JSON.stringify(appConfig));
-            updateHeaderInfo();
-            renderGrid();
-            alert('Configurações salvas!');
         }
 
         function openModal(id) {
-            if (id === 'myNumbersModal') {
-                searchCustomerTickets();
-            }
+            if (id === 'myNumbersModal') searchCustomerTickets();
             document.getElementById(id).classList.remove('hidden');
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
-        }
-
-        function saveReservations() {
-            localStorage.setItem('rifa_number_reservations', JSON.stringify(numberReservations));
         }
     </script>
 </body>
