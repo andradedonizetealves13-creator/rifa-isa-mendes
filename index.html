@@ -206,8 +206,7 @@
 
     <!-- NAVBAR PRINCIPAL -->
     <header class="max-w-4xl mx-auto px-3.5 sm:px-4 pt-4 sm:pt-6 pb-2 flex flex-col sm:flex-row justify-between items-center gap-3 border-b border-white/10 mb-4 sm:mb-6">
-        <!-- ÁREA SECRETA DO LOGO (5 toques para abrir Admin no Celular) -->
-        <div id="secretLogoTrigger" onclick="handleSecretTap()" class="flex items-center gap-2 cursor-pointer select-none">
+        <div class="flex items-center gap-2 select-none">
             <i class="fa-solid fa-paintbrush text-pinkAccent text-xl sm:text-2xl"></i>
             <span class="font-serif font-bold text-lg sm:text-xl tracking-wider text-pinkAccent lowercase">isabellamendesstudio</span>
         </div>
@@ -306,7 +305,7 @@
         </section>
     </main>
 
-    <!-- PAINEL ADMINISTRATIVO -->
+    <!-- PAINEL ADMINISTRATIVO (VISÍVEL APENAS PARA ADMIN) -->
     <main id="adminView" class="max-w-4xl mx-auto px-3 sm:px-4 hidden">
         <div id="adminDashboard" class="space-y-4 sm:space-y-6 my-4 sm:my-6">
             <div class="flex flex-wrap justify-between items-center gap-3 bg-wine-950/80 p-3.5 sm:p-4 rounded-xl border border-white/10">
@@ -352,7 +351,7 @@
                                 <th class="p-2.5">WhatsApp</th>
                                 <th class="p-2.5">E-mail</th>
                                 <th class="p-2.5">Senha</th>
-                                <th class="p-2.5 text-right">Editar</th>
+                                <th class="p-2.5 text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="adminUsersTable" class="divide-y divide-white/5"></tbody>
@@ -421,9 +420,9 @@
     </div>
 
     <script>
-        // CHAVES REAIS DO FIREBASE
+        // CONFIGURAÇÕES DO FIREBASE REALTIME DATABASE
         const firebaseConfig = {
-            apiKey: "AIzaSyCFh-WAp-w7gFlBASFVECvsWH8QwYyAdMI",
+            apiKey: "AIzaSyCFh-wAp-w7gFlBASFVECvsWH8QwYyAdMI",
             authDomain: "isa-mendes-rifa.firebaseapp.com",
             databaseURL: "https://isa-mendes-rifa-default-rtdb.firebaseio.com",
             projectId: "isa-mendes-rifa",
@@ -438,11 +437,11 @@
         }
         const db = firebase.database();
 
+        const ADMIN_EMAIL = "isamendes0108@gmail.com";
+
         const DEFAULT_CONFIG = {
             totalNumbers: 192,
             pricePerNumber: 12.00,
-            adminEmail: 'isamendes0108@gmail.com',
-            adminPassword: 'Andrade.4',
             whatsappPhone: '5519989517874',
             pixKey: '519.223.948-66'
         };
@@ -452,30 +451,6 @@
         let users = {};
         let currentUser = JSON.parse(localStorage.getItem('rifa_current_user')) || null;
         let selectedNumbers = [];
-
-        // TOQUE SECRETO PARA ADMIN (5 toques rápidos na logo) OU Atalho teclado (Ctrl+Shift+A)
-        let secretTapCount = 0;
-        let secretTapTimer = null;
-
-        function handleSecretTap() {
-            secretTapCount++;
-            clearTimeout(secretTapTimer);
-            if (secretTapCount >= 5) {
-                secretTapCount = 0;
-                logoutUser();
-                alert('Acesso Secreto: Faça login com os dados de Administrador.');
-            } else {
-                secretTapTimer = setTimeout(() => { secretTapCount = 0; }, 1500);
-            }
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-                e.preventDefault();
-                logoutUser();
-                alert('Acesso Secreto: Faça login com os dados de Administrador.');
-            }
-        });
 
         // CONEXÃO EM TEMPO REAL COM FIREBASE
         document.addEventListener('DOMContentLoaded', () => {
@@ -572,7 +547,8 @@
             }
 
             const newUserId = 'USR-' + Date.now();
-            const newUser = { id: newUserId, name, phone, email, password, isAdmin: false };
+            const isUserAdmin = (email === ADMIN_EMAIL.toLowerCase());
+            const newUser = { id: newUserId, name, phone, email, password, isAdmin: isUserAdmin };
 
             db.ref('users/' + newUserId).set(newUser, (err) => {
                 if (err) {
@@ -594,20 +570,6 @@
             const loginId = document.getElementById('loginId').value.trim().toLowerCase();
             const pass = document.getElementById('loginPassword').value;
 
-            if (loginId === appConfig.adminEmail.toLowerCase() && pass === appConfig.adminPassword) {
-                currentUser = {
-                    id: 'ADMIN',
-                    name: 'Administradora',
-                    email: appConfig.adminEmail,
-                    phone: appConfig.whatsappPhone,
-                    isAdmin: true
-                };
-                localStorage.setItem('rifa_current_user', JSON.stringify(currentUser));
-                clearAuthForms();
-                checkUserSession();
-                return;
-            }
-
             const cleanLoginPhone = loginId.replace(/\D/g, '');
             const usersArray = Object.values(users);
             const user = usersArray.find(u => 
@@ -616,6 +578,10 @@
             );
 
             if (user) {
+                // Se o email for do adm, garante permissão de admin
+                if (user.email === ADMIN_EMAIL.toLowerCase()) {
+                    user.isAdmin = true;
+                }
                 currentUser = user;
                 localStorage.setItem('rifa_current_user', JSON.stringify(currentUser));
                 clearAuthForms();
@@ -639,7 +605,7 @@
                 userHeader.classList.remove('hidden');
                 userHeader.classList.add('flex');
                 
-                if (currentUser.isAdmin) {
+                if (currentUser.isAdmin || currentUser.email === ADMIN_EMAIL.toLowerCase()) {
                     userNameDisp.textContent = "Admin";
                     userRoleIcon.className = "fa-solid fa-user-shield text-amber-400";
                     clientView.classList.add('hidden');
@@ -850,7 +816,7 @@
         }
 
         function renderAdminDashboard() {
-            if (!currentUser || !currentUser.isAdmin) return;
+            if (!currentUser || (!currentUser.isAdmin && currentUser.email !== ADMIN_EMAIL.toLowerCase())) return;
 
             let confirmedNumCount = 0;
             let pendingNumCount = 0;
@@ -923,8 +889,11 @@
                         <td class="p-2.5 text-xs text-emerald-400 font-mono">${u.phone}</td>
                         <td class="p-2.5 text-xs text-white/80">${u.email}</td>
                         <td class="p-2.5 text-xs font-mono text-pinkAccent">${u.password}</td>
-                        <td class="p-2.5 text-right">
+                        <td class="p-2.5 text-right space-x-1">
                             <button onclick="openEditUserModal('${u.id}')" class="bg-pinkAccent/20 text-pinkAccent text-xs px-2.5 py-1 rounded-lg border border-pinkAccent/30 font-semibold">Editar</button>
+                            ${u.email !== ADMIN_EMAIL.toLowerCase() ? `
+                                <button onclick="deleteUserByAdmin('${u.id}')" class="bg-red-500/20 hover:bg-red-500/40 text-red-300 text-xs px-2 py-1 rounded-lg border border-red-500/30 font-semibold">Excluir</button>
+                            ` : ''}
                         </td>
                     `;
                     usersTableBody.appendChild(tr);
@@ -952,7 +921,7 @@
                 phone: document.getElementById('editUserPhone').value.trim(),
                 email: document.getElementById('editUserEmail').value.trim().toLowerCase(),
                 password: document.getElementById('editUserPassword').value,
-                isAdmin: false
+                isAdmin: (document.getElementById('editUserEmail').value.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase())
             };
 
             db.ref('users/' + id).set(updatedUser, (err) => {
@@ -961,6 +930,25 @@
                     alert('Usuário atualizado na nuvem!');
                 }
             });
+        }
+
+        function deleteUserByAdmin(userId) {
+            const userToDelete = users[userId];
+            if (!userToDelete) return;
+
+            if (confirm(`Tem certeza que deseja EXCLUIR a conta de "${userToDelete.name}"? As reservas deste usuário também serão canceladas.`)) {
+                // Remover o usuário
+                db.ref('users/' + userId).remove();
+
+                // Remover todas as reservas associadas a esse usuário
+                Object.values(numberReservations).forEach(r => {
+                    if (r.userId === userId || r.customerPhone === userToDelete.phone) {
+                        db.ref('reservations/' + r.id).remove();
+                    }
+                });
+
+                alert('Conta de usuário excluída com sucesso!');
+            }
         }
 
         function approveSingleNumber(id) {
