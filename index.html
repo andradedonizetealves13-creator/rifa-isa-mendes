@@ -9,8 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Playfair Display, Montserrat e Great Vibes -->
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     
     <!-- Firebase SDK (Compat v9) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -24,11 +24,10 @@
                         wine: {
                             800: '#52061f',
                             900: '#380213',
-                            950: '#24000b',
+                            950: '#2b020d',
                         },
                         pinkAccent: '#fde8ef',
-                        pinkHover: '#f8c2d2',
-                        goldAccent: '#d4af37'
+                        creamBg: '#f8f6f4'
                     },
                     fontFamily: {
                         serif: ['Playfair Display', 'serif'],
@@ -46,27 +45,17 @@
         }
         body {
             background-color: #2b020d;
-            background-image: radial-gradient(circle at 50% 20%, #4a051b 0%, #2b020d 70%, #170006 100%);
             color: #ffffff;
             font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
         }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
-        }
-        .shake-error {
-            animation: shake 0.4s ease-in-out;
-            border-color: #ef4444 !important;
-        }
         
-        /* BOTÕES DE NÚMEROS OTIMIZADOS PARA TELA TÁTIL */
+        /* ESTILOS DOS NÚMEROS DA RIFA */
         .number-btn {
-            background-color: #fde8ef;
-            color: #380213;
-            font-weight: 800;
+            background-color: #ffffff;
+            color: #2b020d;
+            font-weight: 700;
             transition: all 0.12s ease-in-out;
             aspect-ratio: 1;
             display: flex;
@@ -74,36 +63,44 @@
             justify-content: center;
             border-radius: 8px;
             font-size: 0.85rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             user-select: none;
             cursor: pointer;
             touch-action: manipulation;
         }
         @media (min-width: 640px) { 
-            .number-btn { font-size: 1.1rem; border-radius: 10px; } 
+            .number-btn { font-size: 1rem; border-radius: 10px; } 
         }
         .number-btn:active:not(.reserved):not(.confirmed) { 
-            transform: scale(0.88); 
-            background-color: #f8c2d2;
+            transform: scale(0.92); 
         }
+
+        /* NÚMERO SELECIONADO: VERDE VIBRANTE (#10b981) */
         .number-btn.selected {
             background-color: #10b981 !important;
             color: #ffffff !important;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+            border-color: #059669 !important;
             transform: scale(1.04);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
+
+        /* NÚMERO RESERVADO: TRACEJADO MAIS GROSSO EM VERMELHO (2px dashed) */
         .number-btn.reserved {
-            background-color: #1c0008 !important;
-            color: #999999 !important;
-            border: 1px dashed #ef4444;
+            background-color: #24000b !important;
+            color: #ef4444 !important;
+            border: 2px dashed #ef4444 !important;
             cursor: not-allowed;
-            opacity: 0.65;
+            opacity: 0.9;
+            font-weight: 800;
         }
+
+        /* NÚMERO PAGO: QUASE TRANSPARENTE */
         .number-btn.confirmed {
-            background-color: #140005 !important;
-            color: #3d0e1d !important;
+            background-color: rgba(56, 2, 19, 0.15) !important;
+            color: rgba(56, 2, 19, 0.35) !important;
+            border: 1px solid rgba(56, 2, 19, 0.1) !important;
             cursor: not-allowed;
-            opacity: 0.3;
             box-shadow: none;
         }
 
@@ -112,55 +109,41 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(253, 232, 239, 0.15);
         }
-        .custom-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(253, 232, 239, 0.3);
-            border-radius: 4px;
-        }
 
-        /* CAIXINHAS MOBILE RESPONSIVAS */
+        /* CAIXINHAS SUPERIORES */
         .banner-box {
-            border: 1.5px solid rgba(253, 232, 239, 0.5);
-            border-radius: 14px;
+            border: 1px solid rgba(253, 232, 239, 0.25);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
-            background-color: #24000b;
-            transition: transform 0.2s;
+            background-color: rgba(0, 0, 0, 0.2);
         }
         .banner-box-header {
-            background-color: #380213;
+            background-color: transparent;
             color: #fde8ef;
-            padding: 7px 10px;
+            padding: 8px 10px;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            border-bottom: 1px solid rgba(253, 232, 239, 0.2);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-        @media (min-width: 640px) {
-            .banner-box-header { font-size: 0.88rem; padding: 9px 12px; }
+            border-bottom: 1px solid rgba(253, 232, 239, 0.1);
         }
         .banner-box-body {
-            background-color: #fde8ef;
-            color: #24000b;
+            color: #fde8ef;
             padding: 12px 10px;
-            font-weight: 800;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 1rem;
             text-align: center;
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.25;
-        }
-        @media (min-width: 640px) {
-            .banner-box-body { font-size: 1.1rem; padding: 16px 12px; }
+            line-height: 1.3;
         }
     </style>
 </head>
@@ -258,76 +241,117 @@
 
     </div>
 
-    <!-- NAVBAR PRINCIPAL RESPONSIVA (MOBILE PERSONALIZADO) -->
-    <header class="max-w-5xl mx-auto px-3 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 border-b border-white/10 mb-4 sm:mb-6">
+    <!-- NAVBAR PRINCIPAL SUPERIOR -->
+    <header class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 border-b border-white/10 mb-6">
         <div class="flex flex-col sm:flex-row justify-between items-center gap-2.5 sm:gap-0">
-            
-            <!-- LINHA 1 (MOBILE): INSTAGRAM LOGO ACIMA CENTRALIZADO -->
             <div class="flex items-center gap-1.5 sm:gap-2 select-none justify-center sm:justify-start w-full sm:w-auto">
                 <i class="fa-brands fa-instagram text-pinkAccent text-2xl sm:text-3xl"></i>
                 <span class="font-serif font-extrabold text-lg sm:text-2xl tracking-wide text-pinkAccent">isabellamendesstudio</span>
             </div>
 
-            <!-- LINHA 2 (MOBILE): CONTA À ESQUERDA E MEUS NÚMEROS À DIREITA -->
             <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2">
-                <!-- Status do Usuário / Admin à Esquerda -->
-                <div id="userInfoHeader" class="hidden text-xs sm:text-sm text-pinkAccent bg-transparent px-2.5 sm:px-3.5 py-1 rounded-full border border-pinkAccent/40 items-center gap-1.5">
+                <div id="userInfoHeader" class="hidden text-xs sm:text-sm text-pinkAccent bg-transparent px-3 py-1 rounded-full border border-pinkAccent/40 items-center gap-1.5 cursor-pointer hover:bg-white/5 transition" onclick="openProfileEditModal()">
                     <i id="userRoleIcon" class="fa-solid fa-user-check text-pinkAccent text-xs"></i>
-                    <span id="userNameDisplay" class="font-semibold truncate max-w-[100px] sm:max-w-none"></span>
-                    <button onclick="logoutUser()" class="text-pinkAccent/70 hover:text-pinkAccent underline ml-1 text-[10px] sm:text-xs">(Sair)</button>
+                    <span id="userNameDisplay" class="font-semibold truncate max-w-[110px] sm:max-w-none"></span>
+                    <button onclick="event.stopPropagation(); logoutUser();" class="text-pinkAccent/70 hover:text-pinkAccent underline ml-1 text-[10px] sm:text-xs">(Sair)</button>
                 </div>
 
-                <!-- Botão Meus Números à Direita -->
                 <button id="myNumbersNavBtn" onclick="openModal('myNumbersModal')" class="text-xs sm:text-sm bg-transparent hover:bg-white/5 px-3.5 sm:px-4 py-1 rounded-full text-pinkAccent border border-pinkAccent/40 transition flex items-center gap-1.5 ml-auto sm:ml-0">
                     <i class="fa-solid fa-magnifying-glass text-pinkAccent text-xs"></i> <span>Meus Números</span>
                 </button>
             </div>
-
         </div>
     </header>
 
-    <!-- ÁREA PÚBLICA -->
-    <main id="clientView" class="max-w-4xl mx-auto px-3 sm:px-4">
-        <section class="text-center mb-6 sm:mb-8">
-            <!-- TÍTULO SORTEIO -->
-            <h1 class="font-serif text-3xl sm:text-6xl font-black tracking-widest text-pinkAccent uppercase mb-4 sm:mb-6 drop-shadow-lg">
-                SORTEIO
-            </h1>
+    <!-- ÁREA DA RIFA E CONTEÚDO PRINCIPAL -->
+    <main id="clientView">
+        
+        <!-- SEÇÃO SUPERIOR (VINHO) -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-8">
+                
+                <!-- TÍTULO SORTEIO + SUBTÍTULO -->
+                <div class="lg:col-span-3 flex flex-col justify-center text-center lg:text-left pr-0 lg:pr-2">
+                    <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-pinkAccent mb-2">
+                        Sorteio
+                    </h1>
+                    <p class="text-xs sm:text-sm text-pinkAccent/80 font-light leading-relaxed max-w-md mx-auto lg:mx-0">
+                        para montar meu studio e realizar trabalhos de sobrancelhas e cílios.
+                    </p>
+                    <div class="w-16 h-0.5 bg-pinkAccent/40 mx-auto lg:mx-0 mt-3 hidden lg:block"></div>
+                </div>
 
-            <!-- CAIXINHAS DINÂMICAS GERENCIADAS PELO ADMIN (ATÉ 6) -->
-            <div id="prizesContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8 items-stretch">
-                <!-- Renderizado via JS -->
+                <!-- CAIXINHAS DE PRÊMIOS -->
+                <div id="prizesContainer" class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch">
+                    <!-- Renderizado via JS -->
+                </div>
+
+                <!-- PROGRESSO DA RIFA (%) -->
+                <div class="lg:col-span-3 flex">
+                    <div class="banner-box w-full justify-between p-4 bg-black/20 border border-pinkAccent/30 rounded-xl flex flex-col items-center text-center">
+                        <span class="text-xs font-bold text-pinkAccent tracking-wide uppercase">Progresso da Rifa</span>
+                        
+                        <div class="w-full bg-wine-900 h-3 rounded-full overflow-hidden border border-pinkAccent/30 my-3 p-0.5">
+                            <div id="progressBarFill" class="bg-pinkAccent h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                        </div>
+
+                        <div class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-pinkAccent font-serif tracking-tight" id="progressPercentDisplay">
+                            0%
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- BOTÃO CLICÁVEL WHATSAPP -->
-            <a id="mainWhatsappBtn" href="https://wa.me/5519989517874" target="_blank" class="inline-flex items-center justify-center gap-2.5 bg-transparent hover:bg-white/5 border border-pinkAccent/50 rounded-full py-2 sm:py-2.5 px-5 sm:px-7 shadow-lg active:scale-95 transition cursor-pointer">
-                <i class="fa-brands fa-whatsapp text-pinkAccent text-xl sm:text-2xl"></i>
-                <span class="font-mono font-bold text-base sm:text-xl tracking-wider text-pinkAccent" id="dispPhone">19989517874</span>
-            </a>
-
-            <!-- LEGENDA MANUSCRITA -->
-            <div class="mt-4 sm:mt-6">
-                <h2 class="font-cursive text-3xl sm:text-5xl text-pinkAccent tracking-wide drop-shadow">
-                    Boa sorte
-                </h2>
+            <div class="text-center">
+                <a id="mainWhatsappBtn" href="https://wa.me/5519989517874" target="_blank" class="inline-flex items-center justify-center gap-2.5 bg-transparent hover:bg-white/5 border border-pinkAccent/50 rounded-full py-2.5 px-8 shadow-lg active:scale-95 transition cursor-pointer">
+                    <i class="fa-brands fa-whatsapp text-pinkAccent text-2xl"></i>
+                    <span class="font-mono font-bold text-base sm:text-xl tracking-wider text-pinkAccent" id="dispPhone">(19) 98951-7874</span>
+                    <i class="fa-solid fa-arrow-right text-pinkAccent text-xs ml-1"></i>
+                </a>
+                <div class="text-[11px] text-pinkAccent/60 mt-1.5">Fale conosco pelo WhatsApp</div>
             </div>
         </section>
 
-        <!-- LEGENDA DOS STATUS -->
-        <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-medium mb-4 sm:mb-6 bg-wine-950/60 p-2.5 sm:p-3 rounded-xl border border-white/5">
-            <div class="flex items-center gap-1.5"><span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded bg-pinkAccent inline-block"></span><span>Livre</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded bg-emerald-500 inline-block"></span><span>Selecionado</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded bg-wine-950 border border-red-500/80 inline-block"></span><span>Reservado</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded bg-wine-950 opacity-40 inline-block"></span><span>Pago</span></div>
-        </div>
+        <!-- SEÇÃO INFERIOR COM DIVISÃO DE COR -->
+        <section class="bg-[#f8f6f4] text-[#2b020d] py-8 sm:py-12 border-t border-white/10 min-h-[500px]">
+            <div class="max-w-5xl mx-auto px-3 sm:px-6">
+                
+                <!-- LEGENDA ATUALIZADA (SELECIONADO VERDE E RESERVADO TRACEJADO GROSSO) -->
+                <div class="flex flex-wrap justify-center items-center gap-4 text-xs font-semibold mb-6">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-4 h-4 rounded bg-white border border-gray-300 inline-block shadow-sm"></span>
+                        <span>Livre</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-4 h-4 rounded bg-[#10b981] inline-block shadow-sm"></span>
+                        <span>Selecionado</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-4 h-4 rounded bg-[#24000b] border-2 border-dashed border-red-500 inline-block shadow-sm"></span>
+                        <span>Reservado</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-4 h-4 rounded bg-[#380213]/20 border border-[#380213]/20 inline-block"></span>
+                        <span>Pago</span>
+                    </div>
+                </div>
 
-        <!-- GRELHA DE NÚMEROS -->
-        <section class="custom-card p-2 sm:p-6 rounded-2xl shadow-2xl mb-8">
-            <div id="numbersGrid" class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2"></div>
+                <!-- CONTAINER DE NÚMEROS ESTILIZADO -->
+                <div class="bg-white p-3 sm:p-8 rounded-2xl border border-gray-200/80 shadow-sm">
+                    <div id="numbersGrid" class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2.5"></div>
+                    <div class="text-center text-xs text-gray-500 mt-6 flex items-center justify-center gap-1.5 border-t border-gray-100 pt-4">
+                        <i class="fa-solid fa-lock text-[11px]"></i>
+                        <span>Seu número fica reservado por 24h após a compra.</span>
+                    </div>
+                </div>
+
+            </div>
         </section>
 
-        <!-- BARRA FLUTUANTE DE CHECKOUT MOBILE -->
-        <section id="checkoutSection" class="fixed bottom-0 left-0 right-0 bg-wine-950/95 border-t border-pinkAccent/30 p-2.5 sm:p-4 backdrop-blur-md z-40 transition-transform transform translate-y-full shadow-2xl">
+        <!-- BARRA FLUTUANTE DE CHECKOUT -->
+        <section id="checkoutSection" class="fixed bottom-0 left-0 right-0 bg-wine-950/95 border-t border-pinkAccent/30 p-2.5 sm:p-4 backdrop-blur-md z-40 transition-transform transform translate-y-full shadow-2xl text-white">
             <div class="max-w-4xl mx-auto flex flex-row items-center justify-between gap-2">
                 <div class="text-left w-1/2 sm:w-auto">
                     <div class="text-[10px] sm:text-[11px] text-pinkAccent/80">Selecionados:</div>
@@ -344,7 +368,7 @@
         </section>
     </main>
 
-    <!-- PAINEL ADMINISTRATIVO (VISÍVEL APENAS PARA ADMIN) -->
+    <!-- PAINEL ADMINISTRATIVO -->
     <main id="adminView" class="max-w-4xl mx-auto px-3 sm:px-4 hidden">
         <div id="adminDashboard" class="space-y-4 sm:space-y-6 my-4 sm:my-6">
             <div class="flex flex-wrap justify-between items-center gap-3 bg-wine-950/80 p-3.5 sm:p-4 rounded-xl border border-white/10">
@@ -362,7 +386,7 @@
                 <div class="custom-card p-2.5 sm:p-3 rounded-xl text-center"><span class="text-[10px] sm:text-xs text-white/60">Arrecadação</span><div id="statTotalMoney" class="text-lg sm:text-xl font-bold text-goldAccent">R$ 0,00</div></div>
             </div>
 
-            <!-- GERENCIAMENTO DAS CAIXINHAS DA TELA INICIAL (ATÉ 6) -->
+            <!-- GERENCIAMENTO DAS CAIXINHAS DA TELA INICIAL -->
             <div class="custom-card p-3 sm:p-4 rounded-2xl">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="font-bold text-xs sm:text-lg text-pinkAccent flex items-center gap-2"><i class="fa-solid fa-boxes-packing"></i> Gerenciar Caixinhas (Até 6)</h3>
@@ -416,9 +440,57 @@
         </div>
     </main>
 
-    <!-- MODAIS DE INTERAÇÃO -->
+    <!-- MODAL EDITAR PERFIL DO CLIENTE -->
+    <div id="profileEditModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto text-white">
+            <button onclick="closeModal('profileEditModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-serif text-lg sm:text-xl text-pinkAccent font-bold mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-user-pen"></i> Editar Meu Perfil
+            </h3>
+
+            <div id="profileErrorMsg" class="hidden mb-3 p-2.5 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-xs font-semibold">
+                <span id="profileErrorText">Erro ao atualizar perfil</span>
+            </div>
+
+            <form onsubmit="handleSaveSelfProfile(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-pinkAccent mb-0.5">Nome Completo</label>
+                    <input type="text" id="selfName" required class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-pinkAccent mb-0.5">WhatsApp / Telefone</label>
+                    <input type="tel" id="selfPhone" required maxlength="15" oninput="maskPhone(this)" class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-2 text-white text-xs sm:text-sm focus:outline-none focus:border-pinkAccent">
+                </div>
+
+                <div class="border-t border-white/10 pt-3 mt-3">
+                    <span class="block text-xs font-bold text-pinkAccent mb-2">Alterar Senha (Opcional):</span>
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-[11px] text-white/70 mb-0.5">Senha Atual *</label>
+                            <input type="password" id="selfOldPassword" placeholder="Digite sua senha atual" class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-1.5 text-white text-xs focus:outline-none focus:border-pinkAccent">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-white/70 mb-0.5">Nova Senha *</label>
+                            <input type="password" id="selfNewPassword" placeholder="Digite a nova senha" class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-1.5 text-white text-xs focus:outline-none focus:border-pinkAccent">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-white/70 mb-0.5">Confirmar Nova Senha *</label>
+                            <input type="password" id="selfConfirmNewPassword" placeholder="Confirme a nova senha" class="w-full bg-wine-950 border border-white/20 rounded-xl px-3 py-1.5 text-white text-xs focus:outline-none focus:border-pinkAccent">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeModal('profileEditModal')" class="w-1/2 bg-white/10 hover:bg-white/20 text-white font-semibold py-2 rounded-xl text-xs">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-pinkAccent text-wine-900 font-bold py-2 rounded-xl hover:bg-white active:scale-95 transition text-xs">Salvar Perfil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PIX INSTRUÇÕES -->
     <div id="pixInstructionsModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/40 shadow-2xl text-center relative my-auto">
+        <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/40 shadow-2xl text-center relative my-auto text-white">
             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-2.5 border border-emerald-500/40">
                 <i class="fa-solid fa-clock text-xl sm:text-2xl"></i>
             </div>
@@ -448,9 +520,9 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR USUÁRIO -->
+    <!-- MODAL EDITAR USUÁRIO PELO ADMIN -->
     <div id="editUserModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto">
+        <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto text-white">
             <button onclick="closeModal('editUserModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="font-serif text-lg sm:text-xl text-pinkAccent font-bold mb-2">Editar Usuário</h3>
             <form onsubmit="saveUserEditsByAdmin(event)" class="space-y-2.5">
@@ -469,7 +541,7 @@
 
     <!-- MODAL CONSULTAR MEUS NÚMEROS -->
     <div id="myNumbersModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto">
+        <div class="custom-card bg-wine-900 w-full max-w-md p-5 sm:p-6 rounded-2xl border border-pinkAccent/30 shadow-2xl relative my-auto text-white">
             <button onclick="closeModal('myNumbersModal')" class="absolute top-3.5 right-3.5 text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="font-serif text-lg sm:text-xl text-pinkAccent font-bold mb-2">Consultar Meus Números</h3>
             <div id="searchResults" class="max-h-56 overflow-y-auto space-y-2 custom-scroll"></div>
@@ -517,9 +589,9 @@
         ];
 
         const DEFAULT_PRIZES = [
-            { id: 'PZ-1', icon: 'fa-gift', title: 'Prêmio 1:', content: 'Um perfume Árabe' },
-            { id: 'PZ-2', icon: 'fa-sack-dollar', title: 'Valor por número:', content: 'R$12,00' },
-            { id: 'PZ-3', icon: 'fa-wine-glass', title: 'Prêmio 2:', content: 'Cesta com um vinho + acompanhamentos' }
+            { id: 'PZ-1', icon: 'fa-gift', title: 'PRÊMIO 1:', content: '1 Perfume Árabe' },
+            { id: 'PZ-2', icon: 'fa-sack-dollar', title: 'VALOR POR NÚMERO:', content: 'R$12,00' },
+            { id: 'PZ-3', icon: 'fa-star', title: 'PRÊMIO 2:', content: 'Cesta com um vinho + acompanhamentos' }
         ];
 
         let appConfig = DEFAULT_CONFIG;
@@ -540,6 +612,7 @@
                 numberReservations = snapshot.val() || {};
                 renderGrid();
                 renderAdminDashboard();
+                updateRaffleProgress();
             });
 
             db.ref('prizes').on('value', (snapshot) => {
@@ -559,16 +632,26 @@
             setInterval(cleanExpiredReservations, 60000);
         });
 
+        // CALCULAR E ATUALIZAR PROGRESSO DA RIFA (%)
+        function updateRaffleProgress() {
+            const confirmedCount = Object.values(numberReservations).filter(r => r.status === 'confirmed').length;
+            const percentage = Math.min(100, Math.round((confirmedCount / appConfig.totalNumbers) * 100));
+
+            const fillBar = document.getElementById('progressBarFill');
+            const percentDisplay = document.getElementById('progressPercentDisplay');
+
+            if (fillBar) fillBar.style.width = `${percentage}%`;
+            if (percentDisplay) percentDisplay.textContent = `${percentage}%`;
+        }
+
         function renderPrizesBoxes() {
             const container = document.getElementById('prizesContainer');
             if (!container) return;
 
             const count = prizes.length;
-            if (count === 1) container.className = "grid grid-cols-1 max-w-xs mx-auto gap-3 mb-6 items-stretch";
-            else if (count === 2) container.className = "grid grid-cols-1 sm:grid-cols-2 max-w-xl mx-auto gap-3 mb-6 items-stretch";
-            else if (count === 3) container.className = "grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8 items-stretch";
-            else if (count === 4) container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 sm:mb-8 items-stretch";
-            else container.className = "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8 items-stretch";
+            if (count === 1) container.className = "lg:col-span-6 grid grid-cols-1 max-w-xs mx-auto gap-3 items-stretch";
+            else if (count === 2) container.className = "lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch";
+            else container.className = "lg:col-span-6 grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch";
 
             container.innerHTML = prizes.map(p => `
                 <div class="banner-box">
@@ -627,7 +710,7 @@
             const newPrize = {
                 id: newId,
                 icon: 'fa-gift',
-                title: `Prêmio ${prizes.length + 1}:`,
+                title: `PRÊMIO ${prizes.length + 1}:`,
                 content: 'Descrição do Prêmio'
             };
             prizes.push(newPrize);
@@ -819,6 +902,71 @@
             checkUserSession();
         }
 
+        function openProfileEditModal() {
+            if (!currentUser || currentUser.isAdmin) return;
+            document.getElementById('selfName').value = currentUser.name || '';
+            document.getElementById('selfPhone').value = currentUser.phone || '';
+            document.getElementById('selfOldPassword').value = '';
+            document.getElementById('selfNewPassword').value = '';
+            document.getElementById('selfConfirmNewPassword').value = '';
+            document.getElementById('profileErrorMsg').classList.add('hidden');
+            openModal('profileEditModal');
+        }
+
+        function handleSaveSelfProfile(e) {
+            e.preventDefault();
+            const errorContainer = document.getElementById('profileErrorMsg');
+            const errorText = document.getElementById('profileErrorText');
+            errorContainer.classList.add('hidden');
+
+            const name = document.getElementById('selfName').value.trim();
+            const phone = document.getElementById('selfPhone').value.trim();
+            const oldPass = document.getElementById('selfOldPassword').value;
+            const newPass = document.getElementById('selfNewPassword').value;
+            const confirmNewPass = document.getElementById('selfConfirmNewPassword').value;
+
+            let updatedPassword = currentUser.password;
+
+            if (oldPass || newPass || confirmNewPass) {
+                if (oldPass !== currentUser.password) {
+                    errorText.textContent = "A senha atual informada está incorreta!";
+                    errorContainer.classList.remove('hidden');
+                    return;
+                }
+                if (!newPass || newPass.length < 4) {
+                    errorText.textContent = "A nova senha deve ter no mínimo 4 caracteres!";
+                    errorContainer.classList.remove('hidden');
+                    return;
+                }
+                if (newPass !== confirmNewPass) {
+                    errorText.textContent = "A nova senha e a confirmação não coincidem!";
+                    errorContainer.classList.remove('hidden');
+                    return;
+                }
+                updatedPassword = newPass;
+            }
+
+            const updatedUser = {
+                ...currentUser,
+                name: name,
+                phone: phone,
+                password: updatedPassword
+            };
+
+            db.ref('users/' + currentUser.id).set(updatedUser, (err) => {
+                if (err) {
+                    errorText.textContent = "Erro ao salvar alterações no banco de dados.";
+                    errorContainer.classList.remove('hidden');
+                } else {
+                    currentUser = updatedUser;
+                    localStorage.setItem('rifa_current_user', JSON.stringify(currentUser));
+                    checkUserSession();
+                    closeModal('profileEditModal');
+                    alert('Seu perfil foi atualizado com sucesso!');
+                }
+            });
+        }
+
         function confirmAndReserve() {
             if (!currentUser) { checkUserSession(); return; }
             if (selectedNumbers.length === 0) { alert('Por favor, selecione ao menos um número!'); return; }
@@ -868,7 +1016,7 @@
         }
 
         function updateHeaderInfo() {
-            document.getElementById('dispPhone').textContent = appConfig.whatsappPhone.replace(/^55/, '');
+            document.getElementById('dispPhone').textContent = '(19) 98951-7874';
             document.getElementById('pixKeyText').textContent = appConfig.pixKey;
             
             const mainWaBtn = document.getElementById('mainWhatsappBtn');
